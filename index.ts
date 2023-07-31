@@ -37,8 +37,9 @@ type articleElement = { link: string; title: string; date: Date; desc: string };
 async function readArticle(articlename: string): Promise<Blog[]> {
   const BlogArray: Blog[] = new Array<Blog>();
 
-  for (const filename of Deno.readDirSync(`blog/${articlename}`)) {
-    const str = await Deno.readTextFile(`blog/${articlename}/${filename.name}`);
+  for (const file of Deno.readDirSync(`blog/${articlename}`)) {
+    if(!file.name.includes(".md")) continue;
+    const str = await Deno.readTextFile(`blog/${articlename}/${file.name}`);
     const metadata = extract(str);
     const body = micromark(metadata.body, {
       allowDangerousHtml: true,
@@ -46,7 +47,7 @@ async function readArticle(articlename: string): Promise<Blog[]> {
       htmlExtensions: [gfmHtml(), mathHtml()],
     });
 
-    BlogArray.push({ ...metadata.attrs, filename: filename.name, body: body } as Blog);
+    BlogArray.push({ ...metadata.attrs, filename: file.name, body: body } as Blog);
   }
 
   return BlogArray;
@@ -125,6 +126,13 @@ function saveArticleFile(articleTitle: string, language: string, contents: strin
   Deno.writeTextFileSync(`dist/blog/${articleTitle}/${language}.html`, contents);
 }
 
+function resourceMove(articlename: string) {
+  for (const file of Deno.readDirSync(`blog/${articlename}`)) {
+    if(file.name.includes(".md")) continue;
+    Deno.renameSync(`blog/${articlename}/${file.name}`, `dist/blog/${articlename}/${file.name}`);
+  }
+}
+
 // 블로그 아티클 읽고, 아티클 생성
 async function readBlog() {
   const blogTemaplte = await Deno.readTextFile(`template/blog.html`);
@@ -134,6 +142,7 @@ async function readBlog() {
 
   const articleHTMLList: string[] = new Array<string>();
 
+  // 블로그 디렉토리 아래에서 아티클들 추출
   for (const articles of Deno.readDirSync('blog/')) {
     const articleInfos: Blog[] = await readArticle(articles.name);
     // 언어 코드 추출
@@ -166,6 +175,9 @@ async function readBlog() {
 
     // 아티클 목록 HTML로 저장
     articleHTMLList.push(injectArticle(articleTemplate, article));
+
+    // article 정보에 따라서, 리소스 이동
+    resourceMove(articles.name);
   }
 
   // 아티클 목록 생성
