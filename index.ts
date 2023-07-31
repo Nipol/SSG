@@ -10,7 +10,7 @@ type Blog = {
   language: string; // 번역된 글에 들어가는 메타데이터
   title: string;    // 글의 타이틀
   author: string;   // 글 작성자
-  dect: string;     // 글 내용의 축약
+  desc: string;     // 글 내용의 축약
   date: Date;       // 글이 퍼블리싱된 시점
   tags: string[];   // 글에 연계된 태그들
   body: string;     // 글 내용
@@ -48,8 +48,8 @@ async function readArticle(articlename: string): Promise<Blog[]> {
  */
 function injectTranslates(template: string, translates: string[]): string {
   const transform = (template: string, translate: string): string => {
-    if (translate === "index.html") return template.replace(/<!-- LINK -->/g, "~");
-    return template.replace(/<!-- LINK -->/g, `~/${translate}`);
+    if (translate === "index.html") return template.replace(/<!-- LINK -->/g, ".");
+    return template.replace(/<!-- LINK -->/g, `./${translate}`);
   }
 
   const list: string[] = new Array<string>();
