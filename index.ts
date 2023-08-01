@@ -129,7 +129,7 @@ function saveArticleFile(articleTitle: string, language: string, contents: strin
 function resourceMove(articlename: string) {
   for (const file of Deno.readDirSync(`blog/${articlename}`)) {
     if(file.name.includes(".md")) continue;
-    Deno.renameSync(`blog/${articlename}/${file.name}`, `dist/blog/${articlename}/${file.name}`);
+    Deno.copyFileSync(`blog/${articlename}/${file.name}`, `dist/blog/${articlename}/${file.name}`);
   }
 }
 
