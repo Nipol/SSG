@@ -1,5 +1,6 @@
 {
   "tasks": {
+    "build": "deno run --allow-read --allow-write index.ts",
     "start": "deno run --allow-read --allow-write --watch=blog/ index.ts",
     "tailwind":"tailwind -i main.css -o dist/build.css -w",
     "tailwind:build":"tailwind -i main.css -o dist/build.css -m"

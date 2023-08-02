@@ -182,6 +182,9 @@ async function readBlog() {
 
   // 아티클 목록 생성
   saveArticleList(blogsTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
+
+  // index file 복사
+  await Deno.copyFile(`template/index.html`, `dist/index.html`);
 }
 
 (async () => {
