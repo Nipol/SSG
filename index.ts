@@ -8,6 +8,7 @@ const FLAG: {
   [key: string]: string;
 } = {
   'ko-KR': '🇰🇷',
+  'fr-FR': '🇫🇷',
   'en-GB': '🇬🇧',
   'en-US': '🇺🇸',
 };
@@ -84,6 +85,7 @@ function injectTranslates(template: string, languageCode: string[]): string {
  */
 function injectContents(template: string, { title, date, language, body }: Blog, translates: string): string {
   return template
+    .replace(/<!-- LANGUAGE_CODE -->/g, language)
     .replace(/<!-- TITLE -->/g, title)
     .replace(/<!-- TRANSLATE -->/g, translates)
     .replace(/<!-- PUBLISH_DATE -->/g, new Intl.DateTimeFormat(language).format(date))
@@ -109,8 +111,8 @@ function injectArticle(template: string, { link, title, date, desc }: articleEle
  * @param contents
  */
 function saveArticleList(contents: string) {
-  Deno.mkdirSync(`dist/blog`, { recursive: true });
-  Deno.writeTextFileSync(`dist/blog/index.html`, contents);
+  Deno.mkdirSync(`dist/`, { recursive: true });
+  Deno.writeTextFileSync(`dist/index.html`, contents);
 }
 
 /**
@@ -121,15 +123,19 @@ function saveArticleList(contents: string) {
  */
 function saveArticleFile(articleTitle: string, language: string, contents: string) {
   // 아티클 제목에 해당하는 디렉토리 생성
-  Deno.mkdirSync(`dist/blog/${articleTitle}`, { recursive: true });
+  Deno.mkdirSync(`dist/${articleTitle}`, { recursive: true });
   // 아티클 제목 하위 언어별 파일 생성
-  Deno.writeTextFileSync(`dist/blog/${articleTitle}/${language}.html`, contents);
+  Deno.writeTextFileSync(`dist/${articleTitle}/${language}.html`, contents);
 }
 
+/**
+ * @notice 블로그 디렉토리 내부에 있는 리소스들을 dist의 아티클로 이동
+ * @param articlename 
+ */
 function resourceMove(articlename: string) {
   for (const file of Deno.readDirSync(`blog/${articlename}`)) {
     if(file.name.includes(".md")) continue;
-    Deno.copyFileSync(`blog/${articlename}/${file.name}`, `dist/blog/${articlename}/${file.name}`);
+    Deno.copyFileSync(`blog/${articlename}/${file.name}`, `dist/${articlename}/${file.name}`);
   }
 }
 
@@ -138,6 +144,7 @@ async function readBlog() {
   const blogTemaplte = await Deno.readTextFile(`template/blog.html`);
   const translateTemplate = await Deno.readTextFile(`template/translate.html`);
   const articleTemplate = await Deno.readTextFile(`template/article.html`);
+  // 거의 index임
   const blogsTemplate = await Deno.readTextFile(`template/blogs.html`);
 
   const articleHTMLList: string[] = new Array<string>();
@@ -184,7 +191,7 @@ async function readBlog() {
   saveArticleList(blogsTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
 
   // index file 복사
-  await Deno.copyFile(`template/index.html`, `dist/index.html`);
+  // await Deno.copyFile(`template/index.html`, `dist/index.html`);
 }
 
 (async () => {
