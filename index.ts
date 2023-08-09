@@ -13,6 +13,13 @@ const FLAG: {
   'en-US': '🇺🇸',
 };
 
+const TAGS: {
+  [key: string]: string;
+} = {
+  "Static Site Generator": "purplenight",
+  "Social Media": "coralpink"
+}
+
 /**
  * @notice 아티클에서 추출한 메타데이터
  */
@@ -28,7 +35,7 @@ type Blog = {
   body: string; // 글 내용
 };
 
-type articleElement = { link: string; title: string; date: Date; desc: string };
+type articleElement = { link: string; title: string; date: Date; desc: string, tags: string[] };
 
 /**
  * @notice blog 폴더에서 아티클 단위로 마크다운 파일과 메타데이터를 읽는
@@ -98,12 +105,19 @@ function injectContents(template: string, { title, date, language, body }: Blog,
  * @param param1
  * @returns
  */
-function injectArticle(template: string, { link, title, date, desc }: articleElement): string {
+function injectArticle(template: string, { link, title, date, desc, tags }: articleElement): string {
+  const tagsTemplate = Deno.readTextFileSync(`template/tags.html`);
+
+  const taglist = tags.map((v) => {
+    return tagsTemplate.replace(/<!-- LABEL -->/g, v).replace(/<!-- COLOR -->/g, TAGS[v]);
+  });
+
   return template
     .replace(/<!-- LINK -->/g, `${link}`)
     .replace(/<!-- TITLE -->/g, title)
     .replace(/<!-- DATE -->/g, new Intl.DateTimeFormat('ko-KR').format(date))
-    .replace(/<!-- DESC -->/g, desc);
+    .replace(/<!-- DESC -->/g, desc)
+    .replace(/<!-- TAGS -->/g, taglist.join(''));
 }
 
 /**
@@ -176,6 +190,7 @@ async function readBlog() {
           title: v.title,
           date: v.date,
           desc: v.desc,
+          tags: v.tags
         };
       }
     }).filter((elemeng) => elemeng !== undefined)[0] as articleElement;
@@ -189,9 +204,6 @@ async function readBlog() {
 
   // 아티클 목록 생성
   saveArticleList(blogsTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
-
-  // index file 복사
-  // await Deno.copyFile(`template/index.html`, `dist/index.html`);
 }
 
 (async () => {

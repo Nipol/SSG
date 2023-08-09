@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --color-tag1: 139 96 208;
+        --color-tag2: 255 90 90;
+    }
+
     h1 {
         @apply text-3xl;
         @apply pt-6;
