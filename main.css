@@ -4,8 +4,14 @@
 
 @layer base {
     :root {
-        --color-tag1: 139 96 208;
-        --color-tag2: 255 90 90;
+        background-color: #FDFDFF;
+        @apply text-gray-950;
+        transition: color .4s ease-in-out, background-color .4s ease-in-out;
+    }
+
+    :root[class~="dark"] {
+        @apply bg-gray-950;
+        @apply text-gray-200;
     }
 
     h1 {

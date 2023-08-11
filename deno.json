@@ -2,8 +2,8 @@
   "tasks": {
     "build": "deno run --allow-read --allow-write index.ts",
     "start": "deno run --allow-read --allow-write --watch=blog/,template/ index.ts",
-    "tailwind":"tailwind -i main.css -o dist/build.css -w",
-    "tailwind:build":"tailwind -i main.css -o dist/build.css -m"
+    "tailwind": "tailwind -i main.css -o dist/build.css -w",
+    "tailwind:build": "tailwind -i main.css -o dist/build.css -m"
   },
   "fmt": {
     "useTabs": false,

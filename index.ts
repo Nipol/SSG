@@ -1,24 +1,13 @@
+// @deno-types="./data.d.ts"
+import TAGS from './tags.json' assert { type: 'json' };
+// @deno-types="./data.d.ts"
+import FLAG from './flags.json' assert { type: 'json' };
+
 import { extract } from 'https://deno.land/std@0.196.0/front_matter/any.ts';
 import { micromark } from 'https://esm.sh/micromark@3';
 import { gfm, gfmHtml } from 'https://esm.sh/micromark-extension-gfm@3';
 import { math, mathHtml } from 'https://esm.sh/micromark-extension-math@3';
 import { config } from 'https://deno.land/x/dotenv/mod.ts';
-
-const FLAG: {
-  [key: string]: string;
-} = {
-  'ko-KR': '🇰🇷',
-  'fr-FR': '🇫🇷',
-  'en-GB': '🇬🇧',
-  'en-US': '🇺🇸',
-};
-
-const TAGS: {
-  [key: string]: string;
-} = {
-  "Static Site Generator": "purplenight",
-  "Social Media": "coralpink"
-}
 
 /**
  * @notice 아티클에서 추출한 메타데이터
@@ -35,7 +24,7 @@ type Blog = {
   body: string; // 글 내용
 };
 
-type articleElement = { link: string; title: string; date: Date; desc: string, tags: string[] };
+type articleElement = { link: string; title: string; date: Date; desc: string; tags: string[] };
 
 /**
  * @notice blog 폴더에서 아티클 단위로 마크다운 파일과 메타데이터를 읽는
@@ -46,7 +35,7 @@ async function readArticle(articlename: string): Promise<Blog[]> {
   const BlogArray: Blog[] = new Array<Blog>();
 
   for (const file of Deno.readDirSync(`blog/${articlename}`)) {
-    if(!file.name.includes(".md")) continue;
+    if (!file.name.includes('.md')) continue;
     const str = await Deno.readTextFile(`blog/${articlename}/${file.name}`);
     const metadata = extract(str);
     const body = micromark(metadata.body, {
@@ -144,11 +133,11 @@ function saveArticleFile(articleTitle: string, language: string, contents: strin
 
 /**
  * @notice 블로그 디렉토리 내부에 있는 리소스들을 dist의 아티클로 이동
- * @param articlename 
+ * @param articlename
  */
 function resourceMove(articlename: string) {
   for (const file of Deno.readDirSync(`blog/${articlename}`)) {
-    if(file.name.includes(".md")) continue;
+    if (file.name.includes('.md')) continue;
     Deno.copyFileSync(`blog/${articlename}/${file.name}`, `dist/${articlename}/${file.name}`);
   }
 }
@@ -190,7 +179,7 @@ async function readBlog() {
           title: v.title,
           date: v.date,
           desc: v.desc,
-          tags: v.tags
+          tags: v.tags,
         };
       }
     }).filter((elemeng) => elemeng !== undefined)[0] as articleElement;
