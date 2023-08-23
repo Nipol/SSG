@@ -41,7 +41,7 @@ async function readArticle(articlename: string): Promise<Blog[]> {
     const body = micromark(metadata.body, {
       allowDangerousHtml: true,
       extensions: [gfm(), math()],
-      htmlExtensions: [gfmHtml(), mathHtml()],
+      htmlExtensions: [gfmHtml(), mathHtml({output: "mathml"})],
     });
 
     BlogArray.push({ ...metadata.attrs, filename: file.name, body: body } as Blog);

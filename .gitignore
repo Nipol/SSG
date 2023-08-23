@@ -1,4 +1,4 @@
-blog/*
+blog/Draft-*
 dist
 deno.lock
 .DS_Store
