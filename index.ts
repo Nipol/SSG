@@ -7,6 +7,9 @@ import { extract } from 'https://deno.land/std@0.196.0/front_matter/any.ts';
 import { micromark } from 'https://esm.sh/micromark@3';
 import { gfm, gfmHtml } from 'https://esm.sh/micromark-extension-gfm@3';
 import { math, mathHtml } from 'https://esm.sh/micromark-extension-math@3';
+import { rehype } from 'https://esm.sh/rehype@12';
+import rehypeHighlight from 'https://esm.sh/rehype-highlight@5';
+import solidity from './solidity.js';
 import { config } from 'https://deno.land/x/dotenv/mod.ts';
 
 /**
@@ -41,8 +44,14 @@ async function readArticle(articlename: string): Promise<Blog[]> {
     const body = micromark(metadata.body, {
       allowDangerousHtml: true,
       extensions: [gfm(), math()],
-      htmlExtensions: [gfmHtml(), mathHtml({output: "mathml"})],
+      htmlExtensions: [gfmHtml(), mathHtml({ output: 'mathml' })],
     });
+
+    // Solidity 코드 하이라이팅 준비되면 됨...
+    // const highlighedBody = await rehype()
+    //   .data('settings', {fragment: true})
+    //   .use(rehypeHighlight, {languages: {solidity}})
+    //   .process(body);
 
     BlogArray.push({ ...metadata.attrs, filename: file.name, body: body } as Blog);
   }

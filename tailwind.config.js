@@ -10,7 +10,7 @@ module.exports = {
     'text-coralpink',
     'bg-purplenight',
     'bg-purplenight/30',
-    'text-purplenight'
+    'text-purplenight',
   ],
   theme: {
     extend: {
