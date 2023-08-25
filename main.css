@@ -28,9 +28,7 @@
         @apply leading-loose;
         @apply py-2;
     }
-}
 
-@layer base {
     #contents h1 {
         @apply text-3xl;
         @apply pt-6;
