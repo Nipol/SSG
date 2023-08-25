@@ -48,12 +48,12 @@ async function readArticle(articlename: string): Promise<Blog[]> {
     });
 
     // Solidity 코드 하이라이팅 준비되면 됨...
-    // const highlighedBody = await rehype()
-    //   .data('settings', {fragment: true})
-    //   .use(rehypeHighlight, {languages: {solidity}})
-    //   .process(body);
+    const highlighedBody = await rehype()
+      .data('settings', {fragment: true})
+      .use(rehypeHighlight, {languages: {solidity}})
+      .process(body);
 
-    BlogArray.push({ ...metadata.attrs, filename: file.name, body: body } as Blog);
+    BlogArray.push({ ...metadata.attrs, filename: file.name, body: highlighedBody } as Blog);
   }
 
   return BlogArray;
