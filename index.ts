@@ -56,6 +56,8 @@ async function readArticle(articlename: string): Promise<Blog[]> {
     BlogArray.push({ ...metadata.attrs, filename: file.name, body: highlighedBody } as Blog);
   }
 
+  BlogArray.sort((a, b) => a.date.getTime() - b.date.getTime());
+
   return BlogArray;
 }
 
