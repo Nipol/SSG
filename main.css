@@ -47,6 +47,26 @@
         @apply py-2;
     }
 
+    #contents p > a {
+        @apply text-sky-500;
+    }
+
+    #contents p > a:hover {
+        @apply text-sky-200;
+    }
+
+    #contents p code {
+        @apply bg-sky-200;
+        @apply text-sky-800;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+
+    .dark #contents p code {
+        @apply bg-gray-800;
+        @apply text-white;
+    }
+
     #contents ul {
         @apply ml-8;
         @apply list-disc;
@@ -56,8 +76,20 @@
         @apply my-2;
     }
 
-    #contents p > img {
+    #contents > * {
+        @apply flow-root;
+    }
+
+    #contents > figure {
+        @apply my-4;
+    }
+
+    #contents figure > img {
         @apply mx-auto;
+    }
+
+    #contents figure > figcaption {
+        @apply text-center;
     }
 
     #contents > pre {
