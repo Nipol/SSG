@@ -47,7 +47,6 @@ async function readArticle(articlename: string): Promise<Blog[]> {
       htmlExtensions: [gfmHtml(), mathHtml({ output: 'mathml' })],
     });
 
-    // Solidity 코드 하이라이팅 준비되면 됨...
     const highlighedBody = await rehype()
       .data('settings', {fragment: true})
       .use(rehypeHighlight, {languages: {solidity}})
@@ -56,9 +55,7 @@ async function readArticle(articlename: string): Promise<Blog[]> {
     BlogArray.push({ ...metadata.attrs, filename: file.name, body: highlighedBody } as Blog);
   }
 
-  BlogArray.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  return BlogArray;
+  return BlogArray.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
 /**
