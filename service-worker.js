@@ -3,9 +3,7 @@ self.addEventListener('install', (event) => {
     caches.open('offline-cache').then((cache) => {
       return cache.addAll([
         '/',
-        '/index.html',
-        '/main.css',
-        // add more files as needed
+        '// CACHELIST'
       ]);
     })
   );
