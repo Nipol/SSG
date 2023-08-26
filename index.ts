@@ -208,7 +208,7 @@ async function updateManifestAndServiceWorker() {
   const files = [];
   for await (const entry of walk("dist")) {
     if (!entry.isDirectory) {
-      files.push(`/${entry.path}`);
+      files.push(`/${entry.path.replace('dist/', '')}`);
     }
   }
 
