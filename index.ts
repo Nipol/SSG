@@ -203,6 +203,31 @@ async function readBlog() {
   saveArticleList(blogsTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
 }
 
+import { walk } from "https://deno.land/std/fs/mod.ts";
+
+async function updateManifestAndServiceWorker() {
+  const files = [];
+  for await (const entry of walk("dist")) {
+    if (!entry.isDirectory) {
+      files.push(`/${entry.path}`);
+    }
+  }
+
+  // Update manifest.json
+  const manifest = JSON.parse(await Deno.readTextFile("manifest.json"));
+  manifest.start_url = files[0]; // Assuming the first file is the start_url
+  await Deno.writeTextFile("manifest.json", JSON.stringify(manifest, null, 2));
+
+  // Update service-worker.js
+  const serviceWorker = await Deno.readTextFile("service-worker.js");
+  const updatedServiceWorker = serviceWorker.replace(
+    "/index.html',\n        '/main.css',",
+    files.join("',\n        '")
+  );
+  await Deno.writeTextFile("service-worker.js", updatedServiceWorker);
+}
+
 (async () => {
   await readBlog();
+  await updateManifestAndServiceWorker();
 })();
