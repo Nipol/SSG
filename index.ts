@@ -259,7 +259,7 @@ async function updateManifestAndServiceWorker() {
  * Creates an RSS feed based on the articles in the blog directory and saves it as 'feed.xml' in the 'dist' directory.
  */
 function generateXML(tag: string, content: string, property = '', propValue = ''): string {
-  return `<${tag}${property.length > 0 ? ' "' + property + '"' : ""}${propValue.length > 0 ? '="' + propValue + '"' : ""}>${content}</${tag}>\n`;
+  return `<${tag}${property.length > 0 ? ' ' + property : ""}${propValue.length > 0 ? '="' + propValue + '"' : ""}>${content}</${tag}>\n`;
 }
 
 async function createRSSFeed(articles: articleElement[]) {
