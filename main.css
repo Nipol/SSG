@@ -41,12 +41,17 @@
     }
 
     #contents p {
+        @apply indent-6;
         @apply leading-loose;
         @apply py-2;
     }
 
     #contents p > a {
-        @apply text-sky-500;
+        @apply text-sky-600;
+    }
+
+    #contents p > a::after {
+        content: " ↗";
     }
 
     #contents p > a:hover {
@@ -54,6 +59,8 @@
     }
 
     #contents p code {
+        @apply inline;
+        @apply break-all;
         @apply bg-sky-200;
         @apply text-sky-800;
         padding: 2px 4px;
@@ -74,10 +81,6 @@
         @apply my-2;
     }
 
-    #contents > * {
-        @apply flow-root;
-    }
-
     #contents > figure {
         @apply my-4;
     }
@@ -91,6 +94,14 @@
     }
 
     #contents > pre {
+        @apply overflow-x-scroll;
         @apply my-8;
+    }
+}
+
+/* 인라인 코드 부분,  */
+@media screen(md) {
+    #contents p code {
+        word-break: break-word;
     }
 }
