@@ -11,7 +11,7 @@ import { rehype } from 'https://esm.sh/rehype@12';
 import rehypeHighlight from 'https://esm.sh/rehype-highlight@5';
 import solidity from './solidity.js';
 import { config } from 'https://deno.land/x/dotenv/mod.ts';
-import { walk, xml } from "https://deno.land/std/fs/mod.ts";
+import { walk } from "https://deno.land/std/fs/mod.ts";
 
 /**
  * @notice 아티클에서 추출한 메타데이터
@@ -231,9 +231,7 @@ async function generateHTML({articles, articleInfos}: {articles: articleElement[
   const blogTemaplte = await Deno.readTextFile(`template/blog.html`);
   const translateTemplate = await Deno.readTextFile(`template/translate.html`);
   const articleTemplate = await Deno.readTextFile(`template/article.html`);
-  // 거의 index임
   const blogsTemplate = await Deno.readTextFile(`template/blogs.html`);
-
   const articleHTMLList: string[] = new Array<string>();
 
   for (let i = 0; i < articles.length; i++) {
@@ -271,6 +269,6 @@ async function generateHTML({articles, articleInfos}: {articles: articleElement[
 (async () => {
   const {articles, articleInfos} = await readBlog();
   await generateHTML({articles, articleInfos});
-  await createRSSFeed();
+  // await createRSSFeed();
   await updateManifestAndServiceWorker();
 })();
