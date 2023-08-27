@@ -1,3 +1,5 @@
+const CACHE_NAME = "// CACHE_NAME";
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open('offline-cache').then((cache) => {
