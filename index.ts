@@ -152,7 +152,8 @@ function resourceMove(articlename: string) {
 }
 
 // 블로그 아티클 읽고, 아티클 생성
-async function readBlog() {
+async function readBlog(): Promise<articleElement[]> {
+  const articles: articleElement[] = [];
   const blogTemaplte = await Deno.readTextFile(`template/blog.html`);
   const translateTemplate = await Deno.readTextFile(`template/translate.html`);
   const articleTemplate = await Deno.readTextFile(`template/article.html`);
@@ -200,10 +201,12 @@ async function readBlog() {
 
     // article 정보에 따라서, 리소스 이동
     resourceMove(articles.name);
+    articles.push(article);
   }
 
   // 아티클 목록 생성
   saveArticleList(blogsTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
+  return articles;
 }
 
 async function updateManifestAndServiceWorker() {
