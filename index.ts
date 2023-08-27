@@ -161,17 +161,19 @@ async function readBlog() {
 
   const articleHTMLList: string[] = new Array<string>();
 
-  // 블로그 디렉토리 아래에서 아티클들 추출
+  // 블로그 디렉토리 아래에서 아티클 하나씩 이름 추출
   for (const articles of Deno.readDirSync('blog/')) {
+    // 아티클 이름에서 추출된 포스트 정보
     const articleInfos: Blog[] = await readArticle(articles.name);
     // 언어 코드 추출
     const languages: string[] = articleInfos.map((v) => {
       return v.language;
     });
 
+    // 추출된 번역 코드에 따라, 번역 링크 생성
     const translateAnchor = injectTranslates(translateTemplate, languages);
 
-    // 블로그 언어마다 글 저장
+    // 블로그 언어에 따라 글을 생성하여 저장
     for (const article of articleInfos) {
       saveArticleFile(
         articles.name,
