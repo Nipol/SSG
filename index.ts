@@ -326,6 +326,6 @@ async function generateHTML({articles, articleInfos}: {articles: articleElement[
 (async () => {
   const {articles, articleInfos} = await readBlog();
   await generateHTML({articles, articleInfos});
-  // await createRSSFeed();
+  await createRSSFeed();
   await updateManifestAndServiceWorker();
 })();
