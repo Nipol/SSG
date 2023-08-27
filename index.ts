@@ -258,27 +258,24 @@ async function updateManifestAndServiceWorker() {
 /**
  * Creates an RSS feed based on the articles in the blog directory and saves it as 'feed.xml' in the 'dist' directory.
  */
+function generateXML(tag: string, content: string): string {
+  return `<${tag}>${content}</${tag}>`;
+}
+
 async function createRSSFeed() {
   const articles = await readBlog();
-  const feed = {
-    _name: "rss",
-    _attrs: { version: "2.0" },
-    _content: [
-      {
-        _name: "channel",
-        _content: articles.map((article) => ({
-          _name: "item",
-          _content: [
-            { _name: "title", _content: article.title },
-            { _name: "link", _content: `https://yourwebsite.com/${article.link}` },
-            { _name: "description", _content: article.desc },
-            { _name: "pubDate", _content: article.date.toISOString() },
-          ],
-        })),
-      },
-    ],
-  };
-  const xmlContent = xml(feed, { header: true });
+  let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n';
+
+  for (const article of articles) {
+    xmlContent += generateXML("item",
+      generateXML("title", article.title) +
+      generateXML("link", `https://yourwebsite.com/${article.link}`) +
+      generateXML("description", article.desc) +
+      generateXML("pubDate", article.date.toISOString())
+    );
+  }
+
+  xmlContent += '</channel>\n</rss>';
   Deno.writeTextFileSync("dist/feed.xml", xmlContent);
 }
 
