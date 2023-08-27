@@ -152,36 +152,15 @@ function resourceMove(articlename: string) {
 }
 
 // 블로그 아티클 읽고, 아티클 생성
-async function readBlog(): Promise<articleElement[]> {
+async function readBlog(): Promise<{articles: articleElement[], articleInfos: Blog[][]}> {
   const articlesArray: articleElement[] = [];
-  const blogTemaplte = await Deno.readTextFile(`template/blog.html`);
-  const translateTemplate = await Deno.readTextFile(`template/translate.html`);
-  const articleTemplate = await Deno.readTextFile(`template/article.html`);
-  // 거의 index임
-  const blogsTemplate = await Deno.readTextFile(`template/blogs.html`);
-
-  const articleHTMLList: string[] = new Array<string>();
+  const articleInfosArray: Blog[][] = [];
 
   // 블로그 디렉토리 아래에서 아티클 하나씩 이름 추출
   for (const articles of Deno.readDirSync('blog/')) {
     // 아티클 이름에서 추출된 포스트 정보
     const articleInfos: Blog[] = await readArticle(articles.name);
-    // 언어 코드 추출
-    const languages: string[] = articleInfos.map((v) => {
-      return v.language;
-    });
-
-    // 추출된 번역 코드에 따라, 번역 링크 생성
-    const translateAnchor = injectTranslates(translateTemplate, languages);
-
-    // 블로그 언어에 따라 글을 생성하여 저장
-    for (const article of articleInfos) {
-      saveArticleFile(
-        articles.name,
-        config().PREFERRED_LANGUAGE === article.language ? 'index' : article.language,
-        injectContents(blogTemaplte, article, translateAnchor),
-      );
-    }
+    articleInfosArray.push(articleInfos);
 
     // 아티클 정보 수집
     const article = articleInfos.map((v, i) => {
@@ -196,18 +175,10 @@ async function readBlog(): Promise<articleElement[]> {
       }
     }).filter((elemeng) => elemeng !== undefined)[0] as articleElement;
 
-    // 아티클 목록 HTML로 저장
-    articleHTMLList.push(injectArticle(articleTemplate, article));
-
-    // article 정보에 따라서, 리소스 이동
-    resourceMove(articles.name);
-
     articlesArray.push(article);
   }
 
-  // 아티클 목록 생성
-  saveArticleList(blogsTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
-  return articlesArray;
+  return {articles: articlesArray, articleInfos: articleInfosArray};
 }
 
 async function updateManifestAndServiceWorker() {
@@ -256,8 +227,50 @@ async function createRSSFeed() {
   Deno.writeTextFileSync("dist/feed.xml", xmlContent);
 }
 
+async function generateHTML({articles, articleInfos}: {articles: articleElement[], articleInfos: Blog[][]}) {
+  const blogTemaplte = await Deno.readTextFile(`template/blog.html`);
+  const translateTemplate = await Deno.readTextFile(`template/translate.html`);
+  const articleTemplate = await Deno.readTextFile(`template/article.html`);
+  // 거의 index임
+  const blogsTemplate = await Deno.readTextFile(`template/blogs.html`);
+
+  const articleHTMLList: string[] = new Array<string>();
+
+  for (let i = 0; i < articles.length; i++) {
+    const article = articles[i];
+    const articleInfosForArticle = articleInfos[i];
+
+    // 언어 코드 추출
+    const languages: string[] = articleInfosForArticle.map((v) => {
+      return v.language;
+    });
+
+    // 추출된 번역 코드에 따라, 번역 링크 생성
+    const translateAnchor = injectTranslates(translateTemplate, languages);
+
+    // 블로그 언어에 따라 글을 생성하여 저장
+    for (const articleInfo of articleInfosForArticle) {
+      saveArticleFile(
+        article.link,
+        config().PREFERRED_LANGUAGE === articleInfo.language ? 'index' : articleInfo.language,
+        injectContents(blogTemaplte, articleInfo, translateAnchor),
+      );
+    }
+
+    // 아티클 목록 HTML로 저장
+    articleHTMLList.push(injectArticle(articleTemplate, article));
+
+    // article 정보에 따라서, 리소스 이동
+    resourceMove(article.link);
+  }
+
+  // 아티클 목록 생성
+  saveArticleList(blogsTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
+}
+
 (async () => {
-  await readBlog();
+  const {articles, articleInfos} = await readBlog();
+  await generateHTML({articles, articleInfos});
   await createRSSFeed();
   await updateManifestAndServiceWorker();
 })();
