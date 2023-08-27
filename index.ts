@@ -35,6 +35,11 @@ type articleElement = { link: string; title: string; date: Date; desc: string; t
  * @param articlename
  * @returns 하나의 아티클에 해당하는 모든 정보
  */
+/**
+ * Reads an article from the blog directory and returns its metadata and content.
+ * @param articlename The name of the article to read.
+ * @returns A promise that resolves to an array of Blog objects.
+ */
 async function readArticle(articlename: string): Promise<Blog[]> {
   const BlogArray: Blog[] = new Array<Blog>();
 
@@ -65,6 +70,12 @@ async function readArticle(articlename: string): Promise<Blog[]> {
  * @param translates
  * @returns
  */
+/**
+ * Injects translation links into the provided template.
+ * @param template The template to inject translation links into.
+ * @param languageCode An array of language codes to create translation links for.
+ * @returns The template with translation links injected.
+ */
 function injectTranslates(template: string, languageCode: string[]): string {
   if (languageCode.length == 1) return '';
 
@@ -88,6 +99,16 @@ function injectTranslates(template: string, languageCode: string[]): string {
  * @param translates
  * @returns
  */
+/**
+ * Injects content into the provided blog template.
+ * @param template The blog template to inject content into.
+ * @param title The title of the blog.
+ * @param date The date the blog was published.
+ * @param language The language the blog is written in.
+ * @param body The body content of the blog.
+ * @param translates The translation links for the blog.
+ * @returns The blog template with content injected.
+ */
 function injectContents(template: string, { title, date, language, body }: Blog, translates: string): string {
   return template
     .replace(/<!-- LANGUAGE_CODE -->/g, language)
@@ -102,6 +123,16 @@ function injectContents(template: string, { title, date, language, body }: Blog,
  * @param template
  * @param param1
  * @returns
+ */
+/**
+ * Injects article information into the provided template.
+ * @param template The template to inject article information into.
+ * @param link The link to the article.
+ * @param title The title of the article.
+ * @param date The date the article was published.
+ * @param desc The description of the article.
+ * @param tags The tags associated with the article.
+ * @returns The template with article information injected.
  */
 function injectArticle(template: string, { link, title, date, desc, tags }: articleElement): string {
   const tagsTemplate = Deno.readTextFileSync(`template/tags.html`);
@@ -122,6 +153,10 @@ function injectArticle(template: string, { link, title, date, desc, tags }: arti
  * @notice 블로그 글 목록 파일을 저장하는 함수
  * @param contents
  */
+/**
+ * Saves the provided contents as the article list in the 'dist' directory.
+ * @param contents The contents to save as the article list.
+ */
 function saveArticleList(contents: string) {
   Deno.mkdirSync(`dist/`, { recursive: true });
   Deno.writeTextFileSync(`dist/index.html`, contents);
@@ -132,6 +167,12 @@ function saveArticleList(contents: string) {
  * @param articleTitle
  * @param language
  * @param contents
+ */
+/**
+ * Saves the provided contents as an article file in the 'dist' directory.
+ * @param articleTitle The title of the article.
+ * @param language The language the article is written in.
+ * @param contents The contents to save as the article.
  */
 function saveArticleFile(articleTitle: string, language: string, contents: string) {
   // 아티클 제목에 해당하는 디렉토리 생성
@@ -144,6 +185,10 @@ function saveArticleFile(articleTitle: string, language: string, contents: strin
  * @notice 블로그 디렉토리 내부에 있는 리소스들을 dist의 아티클로 이동
  * @param articlename
  */
+/**
+ * Moves resources associated with the provided article name from the 'blog' directory to the 'dist' directory.
+ * @param articlename The name of the article to move resources for.
+ */
 function resourceMove(articlename: string) {
   for (const file of Deno.readDirSync(`blog/${articlename}`)) {
     if (file.name.includes('.md')) continue;
@@ -152,6 +197,10 @@ function resourceMove(articlename: string) {
 }
 
 // 블로그 아티클 읽고, 아티클 생성
+/**
+ * Reads all articles from the blog directory and returns their metadata and content.
+ * @returns A promise that resolves to an object containing an array of article elements and an array of arrays of Blog objects.
+ */
 async function readBlog(): Promise<{articles: articleElement[], articleInfos: Blog[][]}> {
   const articlesArray: articleElement[] = [];
   const articleInfosArray: Blog[][] = [];
@@ -181,6 +230,9 @@ async function readBlog(): Promise<{articles: articleElement[], articleInfos: Bl
   return {articles: articlesArray, articleInfos: articleInfosArray};
 }
 
+/**
+ * Updates the manifest.json and service-worker.js files in the 'dist' directory based on the current state of the 'dist' directory.
+ */
 async function updateManifestAndServiceWorker() {
   const files = [];
   for await (const entry of walk("dist")) {
@@ -203,6 +255,9 @@ async function updateManifestAndServiceWorker() {
   await Deno.writeTextFile("./dist/service-worker.js", updatedServiceWorker);
 }
 
+/**
+ * Creates an RSS feed based on the articles in the blog directory and saves it as 'feed.xml' in the 'dist' directory.
+ */
 async function createRSSFeed() {
   const articles = await readBlog();
   const feed = {
@@ -227,6 +282,11 @@ async function createRSSFeed() {
   Deno.writeTextFileSync("dist/feed.xml", xmlContent);
 }
 
+/**
+ * Generates HTML for each article in the provided articles array and saves them in the 'dist' directory.
+ * @param articles An array of article elements to generate HTML for.
+ * @param articleInfos An array of arrays of Blog objects containing metadata and content for each article.
+ */
 async function generateHTML({articles, articleInfos}: {articles: articleElement[], articleInfos: Blog[][]}) {
   const blogTemaplte = await Deno.readTextFile(`template/blog.html`);
   const translateTemplate = await Deno.readTextFile(`template/translate.html`);
