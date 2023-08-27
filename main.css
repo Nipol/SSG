@@ -41,7 +41,7 @@
     }
 
     #contents p {
-        @apply indent-6;
+        @apply indent-3;
         @apply leading-loose;
         @apply py-2;
     }
@@ -106,6 +106,9 @@
 
 /* 인라인 코드 부분,  */
 @media screen(md) {
+    #contents p {
+        @apply indent-6;
+    }
     #contents p code {
         word-break: break-word;
     }

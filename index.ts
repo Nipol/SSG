@@ -195,9 +195,11 @@ async function readBlog(): Promise<{ articles: articleElement[]; articleInfos: B
  * Updates the manifest.json and service-worker.js files in the 'dist' directory based on the current state of the 'dist' directory.
  */
 async function updateManifestAndServiceWorker() {
+  const hash = await getCommitHash();
   const files = [];
   for await (const entry of walk('dist')) {
     if (!entry.isDirectory) {
+      if(entry.path.includes("service-worker.js")) continue;
       files.push(`/${entry.path.replace('dist/', '')}`);
     }
   }
@@ -212,7 +214,7 @@ async function updateManifestAndServiceWorker() {
   const updatedServiceWorker = serviceWorker.replace(
     '// CACHELIST',
     files.join('\',\n        \''),
-  );
+  ).replace('// CACHE_NAME', hash);
   await Deno.writeTextFile('./dist/service-worker.js', updatedServiceWorker);
 }
 
@@ -297,6 +299,23 @@ async function generateHTML({ articles, articleInfos }: { articles: articleEleme
 
   // 아티클 목록 생성
   saveArticleList(blogsTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
+}
+
+async function getCommitHash(): Promise<string> {
+  const td = new TextDecoder();
+  const command = new Deno.Command("git", {
+    args: [
+      "rev-parse",
+      "HEAD",
+    ],
+    stdin: "piped",
+    stdout: "piped",
+  });
+
+  const process = (await command.spawn().output()).stdout;
+  const out = td.decode(process).trim();
+
+  return out;
 }
 
 (async () => {
