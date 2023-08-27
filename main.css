@@ -85,6 +85,11 @@
         @apply my-4;
     }
 
+    #contents figure > pre {
+        @apply overflow-x-scroll;
+        @apply my-8;
+    }
+
     #contents figure > img {
         @apply mx-auto;
     }
