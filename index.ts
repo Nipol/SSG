@@ -258,20 +258,24 @@ async function updateManifestAndServiceWorker() {
 /**
  * Creates an RSS feed based on the articles in the blog directory and saves it as 'feed.xml' in the 'dist' directory.
  */
-function generateXML(tag: string, content: string): string {
-  return `<${tag}>${content}</${tag}>`;
+function generateXML(tag: string, content: string, property = '', propValue = ''): string {
+  return `<${tag}${property.length > 0 ? property : ""}${propValue.length > 0 ? "=" + propValue : ""}>${content}</${tag}>\n`;
 }
 
-async function createRSSFeed() {
-  const {articles, articleInfos} = await readBlog();
+async function createRSSFeed(articles: articleElement[]) {
   let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n';
+
+  xmlContent += generateXML("title", "yoonsung.eth") + 
+    generateXML("link", "https://yoonsung.eth.limo") + 
+    generateXML("description", "");
 
   for (const article of articles) {
     xmlContent += generateXML("item",
       generateXML("title", article.title) +
-      generateXML("link", `https://yourwebsite.com/${article.link}`) +
       generateXML("description", article.desc) +
-      generateXML("pubDate", article.date.toISOString())
+      generateXML("link", `https://yourwebsite.com/${article.link}`) +
+      generateXML("guid", article.link, "isPermaLink", "false") + 
+      generateXML("pubDate", article.date.toUTCString())
     );
   }
 
@@ -326,6 +330,6 @@ async function generateHTML({articles, articleInfos}: {articles: articleElement[
 (async () => {
   const {articles, articleInfos} = await readBlog();
   await generateHTML({articles, articleInfos});
-  await createRSSFeed();
+  await createRSSFeed(articles);
   await updateManifestAndServiceWorker();
 })();
