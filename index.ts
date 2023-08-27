@@ -234,12 +234,11 @@ function generateXML(tag: string, content: string, property = '', propValue = ''
  * Creates an RSS feed based on the articles in the blog directory and saves it as 'feed.xml' in the 'dist' directory.
  */
 function createRSSFeed(articles: articleElement[]) {
-  let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n<channel>\n';
+  let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n';
 
   xmlContent += generateXML('title', 'yoonsung.eth') +
     generateXML('link', 'https://yoonsung.eth.limo') +
-    generateXML('description', '') + 
-    `<atom:link href="https://yoonsung.eth.limo/feed.xml" rel="self" type="application/rss+xml" />\n`;
+    generateXML('description', '');
 
   for (const article of articles) {
     xmlContent += generateXML(
