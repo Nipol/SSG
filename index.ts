@@ -263,7 +263,7 @@ function generateXML(tag: string, content: string): string {
 }
 
 async function createRSSFeed() {
-  const articles = await readBlog();
+  const {articles, articleInfos} = await readBlog();
   let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n';
 
   for (const article of articles) {
