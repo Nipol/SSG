@@ -11,7 +11,7 @@ import { rehype } from 'https://esm.sh/rehype@12';
 import rehypeHighlight from 'https://esm.sh/rehype-highlight@5';
 import solidity from './solidity.js';
 import { config } from 'https://deno.land/x/dotenv/mod.ts';
-import { walk } from "https://deno.land/std/fs/mod.ts";
+import { walk, xml } from "https://deno.land/std/fs/mod.ts";
 
 /**
  * @notice 아티클에서 추출한 메타데이터
@@ -226,7 +226,32 @@ async function updateManifestAndServiceWorker() {
   await Deno.writeTextFile("./dist/service-worker.js", updatedServiceWorker);
 }
 
+async function createRSSFeed() {
+  const articles = await readBlog();
+  const feed = {
+    _name: "rss",
+    _attrs: { version: "2.0" },
+    _content: [
+      {
+        _name: "channel",
+        _content: articles.map((article) => ({
+          _name: "item",
+          _content: [
+            { _name: "title", _content: article.title },
+            { _name: "link", _content: `https://yourwebsite.com/${article.link}` },
+            { _name: "description", _content: article.desc },
+            { _name: "pubDate", _content: article.date.toISOString() },
+          ],
+        })),
+      },
+    ],
+  };
+  const xmlContent = xml(feed, { header: true });
+  Deno.writeTextFileSync("dist/feed.xml", xmlContent);
+}
+
 (async () => {
   await readBlog();
+  await createRSSFeed();
   await updateManifestAndServiceWorker();
 })();
