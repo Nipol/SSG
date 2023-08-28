@@ -102,6 +102,21 @@
         @apply overflow-x-scroll;
         @apply my-8;
     }
+
+    #contents blockquote {
+        @apply italic;
+        @apply pl-2;
+        @apply border-l-2;
+        @apply border-l-slate-900;
+    }
+
+    .dark #contents blockquote {
+        @apply border-l-slate-100;
+    }
+
+    #contents blockquote > p {
+        word-break: break-all;
+    }
 }
 
 /* 인라인 코드 부분,  */
@@ -109,6 +124,7 @@
     #contents p {
         @apply indent-6;
     }
+
     #contents p code {
         word-break: break-word;
     }
