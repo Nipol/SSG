@@ -24,9 +24,9 @@
 
     <div class="px-6 sm:max-w-4xl sm:container sm:mx-auto sm:px-4">
         <div id="about">
-            about
-            <w3m-core-button></w3m-core-button>
-            <button id="my-button">Connect Wallet</button>
+            <div id="app">
+                <w3m-core-button></w3m-core-button>
+            </div>
         </div>
     </div>
 
@@ -81,6 +81,11 @@
         } from 'https://unpkg.com/@web3modal/ethereum';
       
         import { Web3Modal } from 'https://unpkg.com/@web3modal/html';
+        // process bug
+        if (!window.process) {
+            window.process = { env: {} }
+        }
+
         const { configureChains, createConfig } = WagmiCore;
         const { mainnet } = WagmiCoreChains;
         const { CoinbaseWalletConnector } = WagmiCoreConnectors;
@@ -91,17 +96,13 @@
 
         const wagmiConfig = createConfig({
             autoConnect: true,
-            connectors: w3mConnectors({ projectId, chains }),
+            connectors: w3mConnectors({ version: 2, projectId, chains }),
             publicClient
         });
 
         const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
         const web3modal = new Web3Modal({ projectId }, ethereumClient);
-
-        document.getElementById('my-button').addEventListener('click', () => {
-          web3modal.openModal()
-        });
       </script>
 </body>
 </html>
