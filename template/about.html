@@ -26,6 +26,7 @@
         <div id="about">
             about
             <w3m-core-button></w3m-core-button>
+            <button id="my-button">Connect Wallet</button>
         </div>
     </div>
 
@@ -97,6 +98,10 @@
         const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
         const web3modal = new Web3Modal({ projectId }, ethereumClient);
+
+        document.getElementById('my-button').addEventListener('click', () => {
+          web3modal.openModal()
+        });
       </script>
 </body>
 </html>
