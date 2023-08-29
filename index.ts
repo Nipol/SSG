@@ -302,7 +302,8 @@ async function generateHTML({ articles, articleInfos }: { articles: articleEleme
   }
 
   // about 정보 이동
-  await Deno.writeTextFile(`dist/about.html`, aboutTemplate);
+  await Deno.mkdir(`dist/about`, { recursive: true });
+  await Deno.writeTextFile(`dist/about/index.html`, aboutTemplate);
 
   // 아티클 목록 생성
   saveArticleList(indexTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
