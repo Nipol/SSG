@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="ko-KR">
+<html lang="ko-kr">
 <head>
     <meta charset="UTF-8">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blogs</title>
-    <link rel="manifest" href="/manifest.json">
+    <title>yoonsung.eth - about</title>
+    <link rel="manifest" href="../manifest.json">
     <script>
-        // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
         if (
           localStorage.getItem('color-theme') === 'dark' ||
           (!('color-theme' in localStorage) &&
@@ -23,10 +22,11 @@
 <body>
     <!-- NavBar -->
 
-    <div class="px-6 py-4 sm:max-w-4xl sm:container sm:mx-auto sm:px-4">
-        <ul>
-            <!-- ARTICLES -->
-        </ul>
+    <div class="px-6 sm:max-w-4xl sm:container sm:mx-auto sm:px-4">
+        <div id="about">
+            about
+            <w3m-core-button></w3m-core-button>
+        </div>
     </div>
 
     <script>
@@ -69,17 +69,35 @@
                 }
             }
         });
-
-        // Register the service worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
     </script>
+    <script type="module">
+        import {
+          EthereumClient,
+          w3mConnectors,
+          w3mProvider,
+          WagmiCore,
+          WagmiCoreChains,
+          WagmiCoreConnectors
+        } from 'https://unpkg.com/@web3modal/ethereum';
+      
+        import { Web3Modal } from 'https://unpkg.com/@web3modal/html';
+        const { configureChains, createConfig } = WagmiCore;
+        const { mainnet } = WagmiCoreChains;
+        const { CoinbaseWalletConnector } = WagmiCoreConnectors;
+        const chains = [ mainnet ];
+        const projectId = '7bf8b183a015492a4f711a28d547201e';
+
+        const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
+
+        const wagmiConfig = createConfig({
+            autoConnect: true,
+            connectors: w3mConnectors({ projectId, chains }),
+            publicClient
+        });
+
+        const ethereumClient = new EthereumClient(wagmiConfig, chains);
+
+        const web3modal = new Web3Modal({ projectId }, ethereumClient);
+      </script>
 </body>
 </html>
