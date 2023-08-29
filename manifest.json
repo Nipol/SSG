@@ -2,7 +2,7 @@
   "name": "yoonsung.eth",
   "short_name": "yoonsung.eth",
   "description": "Blog from yoonsung.eth",
-  "start_url": "/",
+  "start_url": "https://ysnim.ink",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#075985",
