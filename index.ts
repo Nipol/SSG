@@ -206,7 +206,7 @@ async function updateManifestAndServiceWorker() {
 
   // Update manifest.json
   const manifest = JSON.parse(await Deno.readTextFile('manifest.json'));
-  manifest.start_url = files[0]; // Assuming the first file is the start_url
+  // manifest.start_url = "/"; // Assuming the first file is the start_url
   await Deno.writeTextFile('./dist/manifest.json', JSON.stringify(manifest, null, 2));
 
   // Update service-worker.js
