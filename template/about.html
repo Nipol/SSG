@@ -24,15 +24,23 @@
 
     <div class="px-6 sm:max-w-4xl sm:container sm:mx-auto sm:px-4">
         <div id="about">
-            <div id="app">
-                <w3m-core-button></w3m-core-button>
+            <h1>about</h1>
+            <div class="flex">
+                <div class="flex-1 ">
+                    <h2>CHOI YOONSUNG</h2>
+
+                </div>
+                <div class="flex-1 ">
+                    <h2>소셜 토큰 구매</h2>
+                    <iframe id="swap" class="h-144 w-full" loading="lazy"></iframe>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
 
         // Change the icons inside the button based on previous settings
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -41,7 +49,7 @@
             themeToggleDarkIcon.classList.remove('hidden');
         }
 
-        var themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleBtn = document.getElementById('theme-toggle');
 
         themeToggleBtn.addEventListener('click', function() {
             // toggle icons inside button
@@ -69,40 +77,11 @@
                 }
             }
         });
+
+        window.onload = function() {
+            var iframe = document.getElementById('swap');
+            iframe.src = "https://app.uniswap.org/#/swap?exactField=output&exactAmount=1&inputCurrency=ETH&outputCurrency=0x4c6f4d435a939fb85dd946bae4eec9d52587f451";; // 원하는 주소로 변경하세요
+        };
     </script>
-    <script type="module">
-        import {
-          EthereumClient,
-          w3mConnectors,
-          w3mProvider,
-          WagmiCore,
-          WagmiCoreChains,
-          WagmiCoreConnectors
-        } from 'https://unpkg.com/@web3modal/ethereum';
-      
-        import { Web3Modal } from 'https://unpkg.com/@web3modal/html';
-        // process bug
-        if (!window.process) {
-            window.process = { env: {} }
-        }
-
-        const { configureChains, createConfig } = WagmiCore;
-        const { mainnet } = WagmiCoreChains;
-        const { CoinbaseWalletConnector } = WagmiCoreConnectors;
-        const chains = [ mainnet ];
-        const projectId = '7bf8b183a015492a4f711a28d547201e';
-
-        const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
-
-        const wagmiConfig = createConfig({
-            autoConnect: true,
-            connectors: w3mConnectors({ version: 2, projectId, chains }),
-            publicClient
-        });
-
-        const ethereumClient = new EthereumClient(wagmiConfig, chains);
-
-        const web3modal = new Web3Modal({ projectId }, ethereumClient);
-      </script>
 </body>
 </html>

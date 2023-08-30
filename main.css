@@ -117,6 +117,10 @@
     #contents blockquote > p {
         word-break: break-all;
     }
+
+    #about iframe {
+        @apply rounded-lg;
+    }
 }
 
 /* 인라인 코드 부분,  */

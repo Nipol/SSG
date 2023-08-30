@@ -23,6 +23,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      height: {
+        '128': '32rem',
+        '144': '40rem',
+        '160': '48rem',
+      },
       colors: {
         purplenight: '#624296',
         coralpink: '#FF5A5A',
