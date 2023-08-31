@@ -118,12 +118,20 @@
         word-break: break-all;
     }
 
-    #about iframe {
-        @apply rounded-lg;
+    #about a {
+        @apply text-sky-600;
+    }
+
+    #about a::after {
+        content: " ↗";
+    }
+
+    #about a:hover {
+        @apply text-sky-200;
     }
 }
 
-/* 인라인 코드 부분,  */
+/* 인라인 코드 부분, 22  */
 @media screen(md) {
     #contents p {
         @apply indent-6;
