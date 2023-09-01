@@ -118,7 +118,15 @@
         word-break: break-all;
     }
 
+    #about ul > li {
+        @apply text-sm;
+        @apply mb-1;
+    }
+
     #about a {
+        @apply text-sm;
+        @apply text-ellipsis; 
+        @apply overflow-hidden;
         @apply text-sky-600;
     }
 
