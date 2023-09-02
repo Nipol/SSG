@@ -239,7 +239,7 @@ async function createRSSFeed(articles: articleElement[]) {
   let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n';
 
   xmlContent += generateXML('title', 'yoonsung.eth') +
-    generateXML('link', 'https://yoonsung.eth.limo') +
+    generateXML('link', 'https://ysnim.ink/') +
     generateXML('description', '');
 
   for (const article of articles) {
@@ -247,7 +247,7 @@ async function createRSSFeed(articles: articleElement[]) {
       'item',
       generateXML('title', article.title) +
         generateXML('description', article.desc) +
-        generateXML('link', `https://yourwebsite.com/${article.link}`) +
+        generateXML('link', `https://ysnim.ink/${article.link}`) +
         generateXML('guid', article.link, 'isPermaLink', 'false') +
         generateXML('pubDate', article.date.toUTCString()),
     );
