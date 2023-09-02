@@ -98,6 +98,18 @@
         @apply text-center;
     }
 
+    #contents figure figcaption > a {
+        @apply text-sky-600;
+    }
+
+    #contents figure figcaption > a::after {
+        content: " ↗";
+    }
+
+    #contents figure figcaption > a:hover {
+        @apply text-sky-200;
+    }
+
     #contents > pre {
         @apply overflow-x-scroll;
         @apply my-8;
