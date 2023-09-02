@@ -17,6 +17,7 @@ import { walk } from 'https://deno.land/std/fs/mod.ts';
  * @notice 아티클에서 추출한 메타데이터
  */
 type Blog = {
+  link: string; // 해당 아티클이 위치한 url
   filename: string; // 해당 파일의 이름
   title: string; // 글의 타이틀
   date: Date; // 글이 퍼블리싱된 시점
@@ -28,8 +29,6 @@ type Blog = {
   body: string; // 글 내용
 };
 
-type articleElement = { link: string; title: string; date: Date; desc: string; tags: string[] };
-
 /**
  * Reads an article from the blog directory and returns its metadata and content.
  * @param articlename The name of the article to read.
@@ -40,8 +39,8 @@ async function readArticle(articlename: string): Promise<Blog[]> {
 
   for await (const file of Deno.readDir(`blog/${articlename}`)) {
     if (!file.name.includes('.md')) continue;
-    const str = await Deno.readTextFile(`blog/${articlename}/${file.name}`);
-    const metadata = extract(str);
+    const mdbody = await Deno.readTextFile(`blog/${articlename}/${file.name}`);
+    const metadata = extract(mdbody);
     const body = micromark(metadata.body, {
       allowDangerousHtml: true,
       extensions: [gfm(), math()],
@@ -53,10 +52,10 @@ async function readArticle(articlename: string): Promise<Blog[]> {
       .use(rehypeHighlight, { languages: { solidity } })
       .process(body);
 
-    BlogArray.push({ ...metadata.attrs, filename: file.name, body: highlighedBody } as Blog);
+    BlogArray.push({ ...metadata.attrs, link: articlename, filename: file.name, body: highlighedBody } as Blog);
   }
 
-  return BlogArray.sort((a, b) => b.date.getTime() - a.date.getTime());
+  return BlogArray;
 }
 
 /**
@@ -110,7 +109,7 @@ function injectContents(template: string, { title, date, language, body }: Blog,
  * @param tags The tags associated with the article.
  * @returns The template with article information injected.
  */
-async function injectArticle(template: string, { link, title, date, desc, tags }: articleElement): Promise<string> {
+async function injectArticle(template: string, { link, title, date, desc, tags }: Blog): Promise<string> {
   const tagsTemplate = await Deno.readTextFile(`template/tags.html`);
 
   const taglist = tags.map((v) => {
@@ -162,8 +161,7 @@ async function resourceMove(articlename: string) {
  * Reads all articles from the blog directory and returns their metadata and content.
  * @returns A promise that resolves to an object containing an array of article elements and an array of arrays of Blog objects.
  */
-async function readBlog(): Promise<{ articles: articleElement[]; articleInfos: Blog[][] }> {
-  const articlesArray: articleElement[] = [];
+async function readBlog(): Promise<{ articleInfos: Blog[][] }> {
   const articleInfosArray: Blog[][] = [];
 
   // 블로그 디렉토리 아래에서 아티클 하나씩 이름 추출
@@ -171,24 +169,12 @@ async function readBlog(): Promise<{ articles: articleElement[]; articleInfos: B
     // 아티클 이름에서 추출된 포스트 정보
     const articleInfos: Blog[] = await readArticle(articles.name);
     articleInfosArray.push(articleInfos);
-
-    // 아티클 정보 수집
-    const article = articleInfos.map((v, i) => {
-      if (v.language === config().PREFERRED_LANGUAGE) {
-        return {
-          link: articles.name,
-          title: v.title,
-          date: v.date,
-          desc: v.desc,
-          tags: v.tags,
-        };
-      }
-    }).filter((elemeng) => elemeng !== undefined)[0] as articleElement;
-
-    articlesArray.push(article);
   }
 
-  return { articles: articlesArray, articleInfos: articleInfosArray };
+  // 정렬
+  return { articleInfos: articleInfosArray.sort((a, b) => {
+    return a[0].date.getDate() - b[0].date.getDate();
+  }) };
 }
 
 /**
@@ -235,7 +221,7 @@ function generateXML(tag: string, content: string, property = '', propValue = ''
 /**
  * Creates an RSS feed based on the articles in the blog directory and saves it as 'feed.xml' in the 'dist' directory.
  */
-async function createRSSFeed(articles: articleElement[]) {
+async function createRSSFeed(articles: Blog[][]) {
   let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n';
 
   xmlContent += generateXML('title', 'yoonsung.eth') +
@@ -245,11 +231,11 @@ async function createRSSFeed(articles: articleElement[]) {
   for (const article of articles) {
     xmlContent += generateXML(
       'item',
-      generateXML('title', article.title) +
-        generateXML('description', article.desc) +
-        generateXML('link', `https://ysnim.ink/${article.link}`) +
-        generateXML('guid', article.link, 'isPermaLink', 'false') +
-        generateXML('pubDate', article.date.toUTCString()),
+      generateXML('title', article[0].title) +
+        generateXML('description', article[0].desc) +
+        generateXML('link', `https://ysnim.ink/${article[0].link}`) +
+        generateXML('guid', article[0].link, 'isPermaLink', 'false') +
+        generateXML('pubDate', article[0].date.toUTCString()),
     );
   }
 
@@ -262,7 +248,7 @@ async function createRSSFeed(articles: articleElement[]) {
  * @param articles An array of article elements to generate HTML for.
  * @param articleInfos An array of arrays of Blog objects containing metadata and content for each article.
  */
-async function generateHTML({ articles, articleInfos }: { articles: articleElement[]; articleInfos: Blog[][] }) {
+async function generateHTML({ articleInfos }: { articleInfos: Blog[][] }) {
   const navTemaplte = await Deno.readTextFile(`template/nav.html`);
   const titleNavTemplate = navTemaplte.replace('<!-- TITLE -->', 'yoonsung.eth');
   const backNavTemplate = navTemaplte.replace('<!-- TITLE -->', '목록으로');
@@ -273,8 +259,7 @@ async function generateHTML({ articles, articleInfos }: { articles: articleEleme
   const indexTemplate = (await Deno.readTextFile(`template/blogs.html`)).replace('<!-- NavBar -->', titleNavTemplate);
   const articleHTMLList: string[] = new Array<string>();
 
-  for (let i = 0; i < articles.length; i++) {
-    const article = articles[i];
+  for (let i = 0; i < articleInfos.length; i++) {
     const articleInfosForArticle = articleInfos[i];
 
     // 언어 코드 추출
@@ -288,17 +273,17 @@ async function generateHTML({ articles, articleInfos }: { articles: articleEleme
     // 블로그 언어에 따라 글을 생성하여 저장
     for (const articleInfo of articleInfosForArticle) {
       await saveArticleFile(
-        article.link,
+        articleInfo.link,
         config().PREFERRED_LANGUAGE === articleInfo.language ? 'index' : articleInfo.language,
         injectContents(blogTemaplte, articleInfo, translateAnchor),
       );
+
+      // article 정보에 따라서, 리소스 이동
+      await resourceMove(articleInfo.link);
     }
 
-    // 아티클 목록 HTML로 저장
-    articleHTMLList.push(await injectArticle(articleTemplate, article));
-
-    // article 정보에 따라서, 리소스 이동
-    await resourceMove(article.link);
+    // HTML 아티클 목록 생성
+    articleHTMLList.push(await injectArticle(articleTemplate, articleInfosForArticle[0]));
   }
 
   // about 정보 이동
@@ -310,7 +295,7 @@ async function generateHTML({ articles, articleInfos }: { articles: articleEleme
     await Deno.copyFile(`about/${file.name}`, `dist/about/${file.name}`);
   }
 
-  // 아티클 목록 생성
+  // 생성된 HTML 아티클 목록 주입
   saveArticleList(indexTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
 }
 
@@ -332,8 +317,8 @@ async function getCommitHash(): Promise<string> {
 }
 
 (async () => {
-  const { articles, articleInfos } = await readBlog();
-  await generateHTML({ articles, articleInfos });
-  await createRSSFeed(articles);
+  const { articleInfos } = await readBlog();
+  await generateHTML({ articleInfos });
+  await createRSSFeed(articleInfos);
   await updateManifestAndServiceWorker();
 })();
