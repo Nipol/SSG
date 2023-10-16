@@ -174,7 +174,7 @@ async function readBlog(): Promise<{ articleInfos: Blog[][] }> {
 
   // 정렬
   return { articleInfos: articleInfosArray.sort((a, b) => {
-    return a[0].date.getDate() - b[0].date.getDate();
+    return b[0].date.getTime() - a[0].date.getTime();
   }) };
 }
 
