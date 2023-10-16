@@ -72,13 +72,24 @@
         @apply text-white;
     }
 
-    #contents ul {
+    #contents ul{
         @apply ml-8;
         @apply list-disc;
     }
 
-    #contents ul > li {
+    #contents ul li {
         @apply my-2;
+        @apply leading-loose;
+    }
+
+    #contents ol {
+        @apply ml-8;
+        @apply list-decimal;
+    }
+
+    #contents ol li {
+        @apply my-2;
+        @apply leading-loose;
     }
 
     #contents > figure {
@@ -111,8 +122,15 @@
     }
 
     #contents > pre {
+        @apply rounded;
+        @apply bg-gray-300;
         @apply overflow-x-scroll;
         @apply my-8;
+        @apply p-4;
+    }
+
+    .dark #contents > pre {
+        @apply bg-gray-800;
     }
 
     #contents blockquote {
@@ -154,7 +172,7 @@
 /* 인라인 코드 부분, 22  */
 @media screen(md) {
     #contents p {
-        @apply indent-6;
+        @apply indent-4;
     }
 
     #contents p code {

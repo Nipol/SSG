@@ -166,6 +166,7 @@ async function readBlog(): Promise<{ articleInfos: Blog[][] }> {
 
   // 블로그 디렉토리 아래에서 아티클 하나씩 이름 추출
   for await (const articles of Deno.readDir('blog/')) {
+    if (articles.name.startsWith(".")) continue;
     // 아티클 이름에서 추출된 포스트 정보
     const articleInfos: Blog[] = await readArticle(articles.name);
     articleInfosArray.push(articleInfos);
