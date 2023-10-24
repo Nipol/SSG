@@ -28,7 +28,7 @@ type Blog = {
   language: string; // 번역된 글에 들어가는 메타데이터
   author: string; // 글 작성자
   desc: string; // 글 내용의 축약
-  img: string;  // 대표 이미지
+  img: string; // 대표 이미지
   tags: string[]; // 글에 연계된 태그들
   revision: number; //글 업데이트
   body: string; // 글 내용
@@ -102,7 +102,11 @@ function injectTranslates(template: string, languageCode: string[]): string {
  * @param translates The translation links for the blog.
  * @returns The blog template with content injected.
  */
-function injectContents(template: string, { link, title, date, language, body, desc, img }: Blog, translates: string): string {
+function injectContents(
+  template: string,
+  { link, title, date, language, body, desc, img }: Blog,
+  translates: string,
+): string {
   return template
     .replace(/<!-- LANGUAGE_CODE -->/g, language)
     .replace(/<!-- LINK -->/g, link)
@@ -200,6 +204,7 @@ async function readBlog(): Promise<{ articleInfos: Blog[][] }> {
  */
 async function updateManifestAndServiceWorker() {
   const hash = await getCommitHash();
+  const prevHash = await getPrevCommitHash();
   const files = [];
   for await (const entry of walk('dist')) {
     if (!entry.isDirectory) {
@@ -218,7 +223,7 @@ async function updateManifestAndServiceWorker() {
   const updatedServiceWorker = serviceWorker.replace(
     '// CACHELIST',
     files.join('\',\n        \''),
-  ).replace('// CACHE_NAME', hash);
+  ).replace('// CACHE_NAME', hash).replace('// PREV_CACHE_NAME', prevHash);
   await Deno.writeTextFile('./dist/service-worker.js', updatedServiceWorker);
 }
 
@@ -323,6 +328,23 @@ async function getCommitHash(): Promise<string> {
     args: [
       'rev-parse',
       'HEAD',
+    ],
+    stdin: 'piped',
+    stdout: 'piped',
+  });
+
+  const process = (await command.spawn().output()).stdout;
+  const out = td.decode(process).trim();
+
+  return out;
+}
+
+async function getPrevCommitHash(): Promise<string> {
+  const td = new TextDecoder();
+  const command = new Deno.Command('git', {
+    args: [
+      'rev-parse',
+      'HEAD~1',
     ],
     stdin: 'piped',
     stdout: 'piped',
