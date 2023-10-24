@@ -58,6 +58,7 @@
         @apply text-sky-200;
     }
 
+    /* inline highlight */
     #contents p code {
         @apply inline;
         @apply break-all;
@@ -121,7 +122,7 @@
         @apply text-sky-200;
     }
 
-    #contents > pre {
+    #contents pre {
         @apply rounded;
         @apply bg-gray-300;
         @apply overflow-x-scroll;
@@ -129,7 +130,7 @@
         @apply p-4;
     }
 
-    .dark #contents > pre {
+    .dark #contents pre {
         @apply bg-gray-800;
     }
 
