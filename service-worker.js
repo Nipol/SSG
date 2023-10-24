@@ -1,7 +1,7 @@
 const CACHE_VERSION = '// CACHE_NAME';
 
 const CURRENT_CACHES = {
-  offline: 'offline-cache-' + CACHE_VERSION
+  offline: 'offline-cache-' + CACHE_VERSION,
 };
 
 self.addEventListener('install', (event) => {
@@ -29,9 +29,9 @@ self.addEventListener('activate', (event) => {
             // 이전 버전의 캐시를 제거합니다.
             return caches.delete(cacheName);
           }
-        })
+        }),
       );
-    })
+    }),
   );
 });
 

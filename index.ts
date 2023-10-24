@@ -5,7 +5,11 @@ import FLAG from './flags.json' assert { type: 'json' };
 
 import { extract } from 'https://deno.land/std@0.196.0/front_matter/any.ts';
 import { micromark } from 'https://esm.sh/micromark@3';
-import { gfm, gfmHtml } from 'https://esm.sh/micromark-extension-gfm@3';
+import { gfmAutolinkLiteral, gfmAutolinkLiteralHtml } from 'https://esm.sh/micromark-extension-gfm-autolink-literal@2';
+import { gfmFootnote, gfmFootnoteHtml } from 'https://esm.sh/micromark-extension-gfm-footnote@2';
+import { gfmStrikethrough, gfmStrikethroughHtml } from 'https://esm.sh/micromark-extension-gfm-strikethrough@2';
+import { gfmTable, gfmTableHtml } from 'https://esm.sh/micromark-extension-gfm-table@2';
+import { gfmTaskListItem, gfmTaskListItemHtml } from 'https://esm.sh/micromark-extension-gfm-task-list-item@2';
 import { math, mathHtml } from 'https://esm.sh/micromark-extension-math@3';
 import { rehype } from 'https://esm.sh/rehype@12';
 import rehypeHighlight from 'https://esm.sh/rehype-highlight@5';
@@ -24,6 +28,7 @@ type Blog = {
   language: string; // 번역된 글에 들어가는 메타데이터
   author: string; // 글 작성자
   desc: string; // 글 내용의 축약
+  img: string;  // 대표 이미지
   tags: string[]; // 글에 연계된 태그들
   revision: number; //글 업데이트
   body: string; // 글 내용
@@ -43,8 +48,15 @@ async function readArticle(articlename: string): Promise<Blog[]> {
     const metadata = extract(mdbody);
     const body = micromark(metadata.body, {
       allowDangerousHtml: true,
-      extensions: [gfm(), math()],
-      htmlExtensions: [gfmHtml(), mathHtml({ output: 'mathml' })],
+      extensions: [gfmAutolinkLiteral(), gfmFootnote(), gfmStrikethrough(), gfmTable(), gfmTaskListItem(), math()],
+      htmlExtensions: [
+        gfmAutolinkLiteralHtml(),
+        gfmFootnoteHtml(),
+        gfmStrikethroughHtml(),
+        gfmTableHtml(),
+        gfmTaskListItemHtml(),
+        mathHtml({ output: 'mathml' }),
+      ],
     });
 
     const highlighedBody = await rehype()
@@ -90,10 +102,13 @@ function injectTranslates(template: string, languageCode: string[]): string {
  * @param translates The translation links for the blog.
  * @returns The blog template with content injected.
  */
-function injectContents(template: string, { title, date, language, body }: Blog, translates: string): string {
+function injectContents(template: string, { link, title, date, language, body, desc, img }: Blog, translates: string): string {
   return template
     .replace(/<!-- LANGUAGE_CODE -->/g, language)
+    .replace(/<!-- LINK -->/g, link)
     .replace(/<!-- TITLE -->/g, title)
+    .replace(/<!-- DESC -->/g, desc)
+    .replace(/<!-- IMAGE -->/g, img)
     .replace(/<!-- TRANSLATE -->/g, translates)
     .replace(/<!-- PUBLISH_DATE -->/g, new Intl.DateTimeFormat(language).format(date))
     .replace(/<!-- CONTENTS -->/g, body);
@@ -166,16 +181,18 @@ async function readBlog(): Promise<{ articleInfos: Blog[][] }> {
 
   // 블로그 디렉토리 아래에서 아티클 하나씩 이름 추출
   for await (const articles of Deno.readDir('blog/')) {
-    if (articles.name.startsWith(".")) continue;
+    if (articles.name.startsWith('.')) continue;
     // 아티클 이름에서 추출된 포스트 정보
     const articleInfos: Blog[] = await readArticle(articles.name);
     articleInfosArray.push(articleInfos);
   }
 
   // 정렬
-  return { articleInfos: articleInfosArray.sort((a, b) => {
-    return b[0].date.getTime() - a[0].date.getTime();
-  }) };
+  return {
+    articleInfos: articleInfosArray.sort((a, b) => {
+      return b[0].date.getTime() - a[0].date.getTime();
+    }),
+  };
 }
 
 /**
@@ -186,7 +203,7 @@ async function updateManifestAndServiceWorker() {
   const files = [];
   for await (const entry of walk('dist')) {
     if (!entry.isDirectory) {
-      if(entry.path.includes("service-worker.js")) continue;
+      if (entry.path.includes('service-worker.js')) continue;
       files.push(`/${entry.path.replace('dist/', '')}`);
     }
   }
@@ -302,13 +319,13 @@ async function generateHTML({ articleInfos }: { articleInfos: Blog[][] }) {
 
 async function getCommitHash(): Promise<string> {
   const td = new TextDecoder();
-  const command = new Deno.Command("git", {
+  const command = new Deno.Command('git', {
     args: [
-      "rev-parse",
-      "HEAD",
+      'rev-parse',
+      'HEAD',
     ],
-    stdin: "piped",
-    stdout: "piped",
+    stdin: 'piped',
+    stdout: 'piped',
   });
 
   const process = (await command.spawn().output()).stdout;

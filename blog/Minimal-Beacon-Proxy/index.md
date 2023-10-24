@@ -4,6 +4,7 @@ date: 2021-08-25T00:00:00+09:00
 language: ko-KR
 author: yoonsung.eth
 desc: Ethereum의 옵코드만을 이용하여, 업그레이드 가능한 최소 크기 스마트 컨트랙트에 대해 설명하고 코드를 설명합니다.
+img: screenshot7.webp
 tags:
   - Solidity
   - Ethereum

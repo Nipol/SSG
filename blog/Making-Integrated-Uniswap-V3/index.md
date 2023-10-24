@@ -4,6 +4,7 @@ date: 2022-07-11T23:45:00+09:00
 language: ko-KR
 author: yoonsung.eth
 desc: 유니스왑 V3 코드를 통해 사용방법을 배우고, 이를 실제 Solidity 코드에 통합하는 방법을 배웁니다.
+img: screenshot15.webp
 tags:
   - Uniswap
   - Solidity
