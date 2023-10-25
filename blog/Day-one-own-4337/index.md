@@ -4,6 +4,7 @@ date: 2023-10-17T10:00:00+09:00
 language: ko-KR
 author: yoonsung.eth
 desc: 계정 추상화를 구현하는 여정의 첫번째 날에 대한 정리입니다.
+img: Frame.png
 tags:
   - Account Abstraction
   - Solidity
@@ -311,9 +312,9 @@ contract Account is IAccount {
 	…
 		function handleOps(UserOperation[] calldata ops, address payable beneficiary) external {		
 			for(uint256 i; i < ops.length; ++i) {
-			// TODO: sender is already deployed or sender is zero and valued initcode.
-			// we need factory.
-			IAccount(ops[i].sender).validateUserOp(ops[i], ops[i].opHash(address(this)), 0);
+				// TODO: sender is already deployed or sender is zero and valued initcode.
+				// we need factory.
+				IAccount(ops[i].sender).validateUserOp(ops[i], ops[i].opHash(address(this)), 0);
 			}
 		}
 	…
