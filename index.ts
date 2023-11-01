@@ -224,7 +224,9 @@ async function updateManifestAndServiceWorker() {
     '// CACHELIST',
     files.join('\',\n        \''),
   ).replace('// CACHE_NAME', hash).replace('// PREV_CACHE_NAME', prevHash);
-  await Deno.writeTextFile('./dist/service-worker.js', updatedServiceWorker);
+  if (Deno.env.get('DEV') !== 'true') {
+    await Deno.writeTextFile('./dist/service-worker.js', updatedServiceWorker);
+  }
 }
 
 /**
@@ -297,7 +299,7 @@ async function generateHTML({ articleInfos }: { articleInfos: Blog[][] }) {
     for (const articleInfo of articleInfosForArticle) {
       await saveArticleFile(
         articleInfo.link,
-        config().PREFERRED_LANGUAGE === articleInfo.language ? 'index' : articleInfo.language,
+        (config().PREFERRED_LANGUAGE === articleInfo.language) ? 'index' : articleInfo.language,
         injectContents(blogTemaplte, articleInfo, translateAnchor),
       );
 
@@ -305,8 +307,10 @@ async function generateHTML({ articleInfos }: { articleInfos: Blog[][] }) {
       await resourceMove(articleInfo.link);
     }
 
+    const preferredLang = articleInfosForArticle.find((blog) => blog.language == config().PREFERRED_LANGUAGE) as Blog;
+
     // HTML 아티클 목록 생성
-    articleHTMLList.push(await injectArticle(articleTemplate, articleInfosForArticle[0]));
+    articleHTMLList.push(await injectArticle(articleTemplate, preferredLang));
   }
 
   // about 정보 이동
