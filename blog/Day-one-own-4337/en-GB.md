@@ -28,8 +28,6 @@ In addition to these features, from repeated experiences testing Web3 projects, 
 
 For these reasons, when preparing for recent testing, I thought I should implement ERC-4337 as a trial. Recording is also very important, so I want to publicly document the process of implementing and integrating AA through my blog. All implementations will follow [ERC-4337](https://eips.ethereum.org/EIPS/eip-4337), and the contracts are on [own4337 on Github](https://github.com/Nipol/own4337). I think going through this public process will provide great motivation to continuously write these articles. Please let me know if there are any incorrect implementations, and I will continuously improve as I implement and integrate. I will be back tomorrow for the second day!
 
-Here is a continued translation of the message:
-
 ## Implementation Start 
 
 In general, everything starts from the `UserOperation` struct. Because it defines the work a user wants to do, we first define it according to the document.
