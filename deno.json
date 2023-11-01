@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "build": "deno run --allow-read --allow-write --allow-run index.ts",
+    "build": "deno run --allow-read --allow-write --allow-run --allow-env index.ts",
     "start": "export DEV='true' && deno run --allow-read --allow-write --allow-run --allow-env --watch=blog/,template/ index.ts",
     "tailwind": "tailwind -i main.css -o dist/build.css -w",
     "tailwind:build": "tailwind -i main.css -o dist/build.css -m"
