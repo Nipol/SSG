@@ -105,7 +105,8 @@ library UserOpLib {
 그리고 이를 테스트할 코드들도 작성해서 잘 작동하는 것을 확인합니다.
 
 ```solidity
-// SPDX-License-Identifier: UNLICENSED
+// test/UserOpLib.t.sol
+
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
