@@ -81,7 +81,8 @@ function injectTranslates(template: string, languageCode: string[]): string {
 
   const transform = (template: string, languageCode: string): string => {
     if (languageCode === config().PREFERRED_LANGUAGE) return template.replace(/<!-- LINK -->/g, '.');
-    return template.replace(/<!-- LINK -->/g, `./${languageCode}.html`);
+    if (Deno.env.get('DEV') === 'true') return template.replace(/<!-- LINK -->/g, `./${languageCode}.html`);
+    return template.replace(/<!-- LINK -->/g, `./${languageCode}`);
   };
 
   const list: string[] = new Array<string>();
