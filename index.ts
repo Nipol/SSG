@@ -3,20 +3,24 @@ import TAGS from './tags.json' assert { type: 'json' };
 // @deno-types="./data.d.ts"
 import FLAG from './flags.json' assert { type: 'json' };
 
-import { extract } from 'https://deno.land/std@0.196.0/front_matter/any.ts';
-import { micromark } from 'https://esm.sh/micromark@3';
-import { gfmAutolinkLiteral, gfmAutolinkLiteralHtml } from 'https://esm.sh/micromark-extension-gfm-autolink-literal@2';
-import { gfmFootnote, gfmFootnoteHtml } from 'https://esm.sh/micromark-extension-gfm-footnote@2';
-import { gfmStrikethrough, gfmStrikethroughHtml } from 'https://esm.sh/micromark-extension-gfm-strikethrough@2';
-import { gfmTable, gfmTableHtml } from 'https://esm.sh/micromark-extension-gfm-table@2';
-import { gfmTaskListItem, gfmTaskListItemHtml } from 'https://esm.sh/micromark-extension-gfm-task-list-item@2';
-import { math, mathHtml } from 'https://esm.sh/micromark-extension-math@3';
-import { rehype } from 'https://esm.sh/rehype@12';
-import rehypeHighlight from 'https://esm.sh/rehype-highlight@5';
-import solidity from './solidity.js';
 import { config } from 'https://deno.land/x/dotenv/mod.ts';
 import { walk } from 'https://deno.land/std/fs/mod.ts';
+import { extract } from 'https://deno.land/std@0.196.0/front_matter/any.ts';
+import { unified } from 'https://esm.sh/unified@11';
+import remarkParse from 'https://esm.sh/remark-parse@11';
+import remarkGfm from 'https://esm.sh/remark-gfm@4';
+import remarkToc from 'https://esm.sh/remark-toc@9';
+import remarkRehype from 'https://esm.sh/remark-rehype@11';
+import remarkMath from 'https://esm.sh/remark-math@6';
+import rehypeRaw from 'https://esm.sh/rehype-raw@7';
+import rehypeKatex from 'https://esm.sh/rehype-katex@7';
+import rehypeSlug from 'https://esm.sh/rehype-slug@6';
+import rehypeAutolinkHeadings from 'https://esm.sh/rehype-autolink-headings@7';
+import rehypeHighlight from 'https://esm.sh/rehype-highlight@5';
+import rehypeExternalLinks from 'https://esm.sh/rehype-external-links@3';
+import rehypeStringify from 'https://esm.sh/rehype-stringify@10';
 
+import solidity from './solidity.js';
 /**
  * @notice 아티클에서 추출한 메타데이터
  */
@@ -46,25 +50,22 @@ async function readArticle(articlename: string): Promise<Blog[]> {
     if (!file.name.includes('.md')) continue;
     const mdbody = await Deno.readTextFile(`blog/${articlename}/${file.name}`);
     const metadata = extract(mdbody);
-    const body = micromark(metadata.body, {
-      allowDangerousHtml: true,
-      extensions: [gfmAutolinkLiteral(), gfmFootnote(), gfmStrikethrough(), gfmTable(), gfmTaskListItem(), math()],
-      htmlExtensions: [
-        gfmAutolinkLiteralHtml(),
-        gfmFootnoteHtml(),
-        gfmStrikethroughHtml(),
-        gfmTableHtml(),
-        gfmTaskListItemHtml(),
-        mathHtml({ output: 'mathml' }),
-      ],
-    });
-
-    const highlighedBody = await rehype()
-      .data('settings', { fragment: true })
+    const body = await unified()
+      .use(remarkParse)
+      .use(remarkToc, { heading: '목차|Contents?|indice' })
+      .use(remarkGfm)
+      .use(remarkMath)
+      .use(remarkRehype, { allowDangerousHtml: true })
+      .use(rehypeRaw)
+      .use(rehypeKatex, { output: 'mathml' })
+      .use(rehypeSlug)
+      .use(rehypeAutolinkHeadings, { behavior: 'wrap', content: '' })
       .use(rehypeHighlight, { languages: { solidity } })
-      .process(body);
+      .use(rehypeExternalLinks, { rel: ['nofollow'] })
+      .use(rehypeStringify)
+      .process(metadata.body);
 
-    BlogArray.push({ ...metadata.attrs, link: articlename, filename: file.name, body: highlighedBody } as Blog);
+    BlogArray.push({ ...metadata.attrs, link: articlename, filename: file.name, body: body } as Blog);
   }
 
   return BlogArray;
