@@ -360,7 +360,7 @@ contract Resin {
 이번 예시는 다수의 사람들이 모인 단체에 정체성을 부여하기 위한 NFT 프로젝트입니다. 자신의 소속감을 위해서 NFT 시리즈를 발행하는 경우가 많은데 해당 NFT 또한 동일한 목적으로 만들어져 누구나 자신만의 NFT 시리즈를 만들 수 있습니다.
 
 <figure class="mx-auto md:w-1/3">
-  <img src="./vector.png" />
+  <img src="./vec.png" />
   <figcaption><cite>첫 번째 시리즈</cite></figcaption>
 </figure>
 
