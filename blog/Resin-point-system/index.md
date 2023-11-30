@@ -4,7 +4,7 @@ date: 2023-11-29T21:24:00+09:00
 language: ko-KR
 author: yoonsung.eth
 desc: 콘텐츠 소비 속도를 조절하는 피로도 시스템을 스마트 컨트랙트로 동작하는 포인트 시스템으로 구현하며, 사용하는 예시와 통합하는 과정을 소개합니다.
-img: 0.png
+img: front.png
 tags:
   - Smart Contract
   - Ethereum
