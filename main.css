@@ -1,424 +1,495 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
-    :root {
-        background-color: #FDFDFF;
-        @apply text-gray-950;
-        transition: color .4s ease-in-out, background-color .4s ease-in-out;
-    }
+  :root {
+    background-color: #fdfdff;
+    @apply text-gray-950;
+    transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out;
+  }
 
-    :root[class~="dark"] {
-        @apply bg-gray-950;
-        @apply text-gray-200;
-    }
+  :root[class~='dark'] {
+    @apply bg-gray-950;
+    @apply text-gray-200;
+  }
 
-    h1 {
-        @apply text-4xl;
-        @apply pt-6;
-        @apply pb-2;
-    }
+  h1 {
+    @apply text-7xl;
+    @apply pt-6;
+    @apply pb-2;
+    word-wrap: break-word;
+    word-break: keep-all;
+  }
 
-    h2 {
-        @apply text-3xl;
-        @apply pt-4;
-    }
+  h2 {
+    @apply text-5xl;
+    @apply pt-4;
+  }
 
-    h3 {
-        @apply text-2xl;
-        @apply pt-4;
-    }
+  h3 {
+    @apply text-5xl;
+    @apply pt-4;
+  }
 
-    h1 a:hover:after, h2 a:hover::after, h3 a:hover::after {
-        content: " ↗";
-    }
+  h1 a:hover:after, h2 a:hover::after, h3 a:hover::after, h4 a:hover::after, h5 a:hover::after, h6 a:hover::after {
+    content: ' ↗';
+  }
 
-    p {
-        @apply leading-loose;
-        @apply py-2;
-    }
+  p {
+    @apply py-2;
+  }
 
-    #contents h1 {
-        @apply text-3xl;
-        @apply pt-6;
-        @apply pb-2;
-    }
+  /* 목차 */
+  #contents h2:nth-of-type(1) {
+    @apply text-2xl;
+    @apply text-gray-400;
+  }
 
-    #contents h2 {
-        @apply mt-8;
-        @apply text-2xl;
-    }
+  #contents h2:nth-of-type(1) + :nth-child(1 of ul) * {
+    @apply text-gray-400;
+  }
 
-    #contents p {
-        @apply indent-3;
-        @apply leading-loose;
-        @apply py-2;
-    }
+  #contents h2:nth-of-type(1) + :nth-child(1 of ul) *:hover {
+    @apply text-gray-600;
+  }
 
-    #contents p > a {
-        @apply text-sky-600;
-    }
+  /* 목차 바로 다음에는 Margin top 적용 */
+  #contents p:first-of-type {
+    @apply mt-8;
+  }
 
-    #contents p > a::after {
-        content: " ↗";
-    }
+  /*   */
+  #contents h2 + p:first-of-type {
+    @apply mt-0;
+  }
 
-    #contents p > a:hover {
-        @apply text-sky-200;
-    }
+  /* 콘텐츠 영역 */
+  #contents h2 {
+    @apply pt-8;
+    @apply text-5xl;
+    word-wrap: break-word;
+    word-break: keep-all;
+    @apply text-rose-500;
+  }
 
-    /* inline highlight */
-    #contents p code,
-    #contents li code {
-        @apply inline;
-        @apply break-all;
-        @apply bg-sky-200;
-        @apply text-sky-800;
-        padding: 2px 4px;
-        border-radius: 4px;
-    }
+  #contents h3 {
+    @apply pt-4;
+    @apply text-3xl;
+    @apply text-orange-500;
+  }
 
-    .dark #contents p code,
-    .dark #contents li code {
-        @apply bg-gray-800;
-        @apply text-white;
-    }
+  #contents h4 {
+    @apply pt-2;
+    @apply text-2xl;
+    @apply text-teal-500;
+  }
 
-    #contents ul {
-        @apply ml-8;
-        @apply list-disc;
-    }
+  #contents h5 {
+    @apply pt-2;
+    @apply text-xl;
+  }
 
-    #contents ul li {
-        @apply my-2;
-        @apply leading-loose;
-    }
+  #contents h6 {
+    @apply pt-2;
+    @apply text-xl;
+  }
 
-    #contents ol {
-        @apply ml-8;
-        @apply list-decimal;
-    }
+  #contents p {
+    @apply indent-3;
+    @apply leading-loose;
+    @apply py-2;
+  }
 
-    #contents ol li {
-        @apply my-2;
-        @apply leading-loose;
-    }
+  #contents p > a {
+    @apply text-sky-600;
+  }
 
-    #contents > figure {
-        @apply my-4;
-    }
+  #contents p > a::after {
+    content: ' ↗';
+  }
 
-    #contents figure > pre {
-        @apply overflow-x-scroll;
-        @apply my-8;
-    }
+  #contents p > a:hover {
+    @apply text-sky-200;
+  }
 
-    #contents figure > img {
-        @apply mx-auto;
-    }
+  /* inline highlight */
+  #contents p code,
+  #contents li code {
+    @apply inline;
+    @apply break-all;
+    @apply bg-sky-200;
+    @apply text-gray-800;
+    padding: 2px 4px;
+    border-radius: 2px;
+  }
 
-    #contents figure > figcaption {
-        @apply text-center;
-    }
+  .dark #contents p code,
+  .dark #contents li code {
+    @apply bg-gray-800;
+    @apply text-white;
+  }
 
-    #contents figure figcaption > a {
-        @apply text-sky-600;
-    }
+  #contents ul {
+    @apply ml-8;
+    @apply list-disc;
+  }
 
-    #contents figure figcaption > a::after {
-        content: " ↗";
-    }
+  #contents ul li {
+    @apply leading-loose;
+  }
 
-    #contents figure figcaption > a:hover {
-        @apply text-sky-200;
-    }
+  #contents ol {
+    @apply ml-8;
+    @apply list-decimal;
+  }
 
-    #contents pre {
-        @apply rounded;
-        @apply bg-gray-300;
-        @apply overflow-x-scroll;
-        @apply my-4;
-        @apply p-4;
-    }
+  #contents ol li {
+    @apply leading-loose;
+  }
 
-    .dark #contents pre {
-        @apply bg-gray-800;
-    }
+  #contents > figure {
+    @apply my-4;
+  }
 
-    #contents blockquote {
-        @apply italic;
-        @apply pl-2;
-        @apply border-l-2;
-        @apply border-l-slate-900;
-    }
+  #contents figure > pre {
+    @apply overflow-x-scroll;
+    @apply my-8;
+  }
 
-    .dark #contents blockquote {
-        @apply border-l-slate-100;
-    }
+  #contents figure > img {
+    @apply mx-auto;
+  }
 
-    #contents blockquote > p {
-        word-break: break-all;
-    }
+  #contents figure > figcaption {
+    @apply text-center;
+  }
 
-    .light #contents .hljs {
-        color: #24292e;
-        /* background: #ffffff; */
-    }
-    
-    .light #contents .hljs-doctag,
-    .light #contents .hljs-keyword,
-    .light #contents .hljs-meta .hljs-keyword,
-    .light #contents .hljs-template-tag,
-    .light #contents .hljs-template-variable,
-    .light #contents .hljs-type,
-    .light #contents .hljs-variable.language_ {
-        /* prettylights-syntax-keyword */
-        color: #d73a49;
-    }
-    
-    .light #contents .hljs-title,
-    .light #contents .hljs-title.class_,
-    .light #contents .hljs-title.class_.inherited__,
-    .light #contents .hljs-title.function_ {
-        /* prettylights-syntax-entity */
-        color: #6f42c1;
-    }
-    
-    .light #contents .hljs-attr,
-    .light #contents .hljs-attribute,
-    .light #contents .hljs-literal,
-    .light #contents .hljs-meta,
-    .light #contents .hljs-number,
-    .light #contents .hljs-operator,
-    .light #contents .hljs-variable,
-    .light #contents .hljs-selector-attr,
-    .light #contents .hljs-selector-class,
-    .light #contents .hljs-selector-id {
-        /* prettylights-syntax-constant */
-        color: #005cc5;
-    }
-    
-    .light #contents .hljs-regexp,
-    .light #contents .hljs-string,
-    .light #contents .hljs-meta .hljs-string {
-        /* prettylights-syntax-string */
-        color: #032f62;
-    }
-    
-    .light #contents .hljs-built_in,
-    .light #contents .hljs-symbol {
-        /* prettylights-syntax-variable */
-        color: #e36209;
-    }
-    
-    .light #contents .hljs-comment,
-    .light #contents .hljs-code,
-    .light #contents .hljs-formula {
-        /* prettylights-syntax-comment */
-        color: #6a737d;
-    }
-    
-    .light #contents .hljs-name,
-    .light #contents .hljs-quote,
-    .light #contents .hljs-selector-tag,
-    .light #contents .hljs-selector-pseudo {
-        /* prettylights-syntax-entity-tag */
-        color: #22863a;
-    }
-    
-    .light #contents .hljs-subst {
-        /* prettylights-syntax-storage-modifier-import */
-        color: #24292e;
-    }
-    
-    .light #contents .hljs-section {
-        /* prettylights-syntax-markup-heading */
-        color: #005cc5;
-        font-weight: bold;
-    }
-    
-    .light #contents .hljs-bullet {
-        /* prettylights-syntax-markup-list */
-        color: #735c0f;
-    }
-    
-    .light #contents .hljs-emphasis {
-        /* prettylights-syntax-markup-italic */
-        color: #24292e;
-        font-style: italic;
-    }
-    
-    .light #contents .hljs-strong {
-        /* prettylights-syntax-markup-bold */
-        color: #24292e;
-        font-weight: bold;
-    }
-    
-    .light #contents .hljs-addition {
-        /* prettylights-syntax-markup-inserted */
-        color: #22863a;
-        background-color: #f0fff4;
-    }
-    
-    .light #contents .hljs-deletion {
-        /* prettylights-syntax-markup-deleted */
-        color: #b31d28;
-        background-color: #ffeef0;
-    }
-    
-    .light #contents .hljs-char.escape_,
-    .light #contents .hljs-link,
-    .light #contents .hljs-params,
-    .light #contents .hljs-property,
-    .light #contents .hljs-punctuation,
-    .light #contents .hljs-tag {
+  #contents figure figcaption > a {
+    @apply text-sky-600;
+  }
+
+  #contents figure figcaption > a::after {
+    content: ' ↗';
+  }
+
+  #contents figure figcaption > a:hover {
+    @apply text-sky-200;
+  }
+
+  #contents pre {
+    @apply rounded;
+    @apply bg-gray-300;
+    @apply overflow-x-scroll;
+    @apply my-4;
+    @apply p-4;
+  }
+
+  .dark #contents pre {
+    @apply bg-gray-800;
+  }
+
+  #contents blockquote {
+    @apply italic;
+    @apply pl-2;
+    @apply border-l-2;
+    @apply border-l-slate-900;
+  }
+
+  .dark #contents blockquote {
+    @apply border-l-slate-100;
+  }
+
+  #contents blockquote > p {
+    word-break: break-all;
+  }
+
+  .light #contents .hljs {
+    color: #24292e;
+    /* background: #ffffff; */
+  }
+
+  .light #contents .hljs-doctag,
+  .light #contents .hljs-keyword,
+  .light #contents .hljs-meta .hljs-keyword,
+  .light #contents .hljs-template-tag,
+  .light #contents .hljs-template-variable,
+  .light #contents .hljs-type,
+  .light #contents .hljs-variable.language_ {
+    /* prettylights-syntax-keyword */
+    color: #d73a49;
+  }
+
+  .light #contents .hljs-title,
+  .light #contents .hljs-title.class_,
+  .light #contents .hljs-title.class_.inherited__,
+  .light #contents .hljs-title.function_ {
+    /* prettylights-syntax-entity */
+    color: #6f42c1;
+  }
+
+  .light #contents .hljs-attr,
+  .light #contents .hljs-attribute,
+  .light #contents .hljs-literal,
+  .light #contents .hljs-meta,
+  .light #contents .hljs-number,
+  .light #contents .hljs-operator,
+  .light #contents .hljs-variable,
+  .light #contents .hljs-selector-attr,
+  .light #contents .hljs-selector-class,
+  .light #contents .hljs-selector-id {
+    /* prettylights-syntax-constant */
+    color: #005cc5;
+  }
+
+  .light #contents .hljs-regexp,
+  .light #contents .hljs-string,
+  .light #contents .hljs-meta .hljs-string {
+    /* prettylights-syntax-string */
+    color: #032f62;
+  }
+
+  .light #contents .hljs-built_in,
+  .light #contents .hljs-symbol {
+    /* prettylights-syntax-variable */
+    color: #e36209;
+  }
+
+  .light #contents .hljs-comment,
+  .light #contents .hljs-code,
+  .light #contents .hljs-formula {
+    /* prettylights-syntax-comment */
+    color: #6a737d;
+  }
+
+  .light #contents .hljs-name,
+  .light #contents .hljs-quote,
+  .light #contents .hljs-selector-tag,
+  .light #contents .hljs-selector-pseudo {
+    /* prettylights-syntax-entity-tag */
+    color: #22863a;
+  }
+
+  .light #contents .hljs-subst {
+    /* prettylights-syntax-storage-modifier-import */
+    color: #24292e;
+  }
+
+  .light #contents .hljs-section {
+    /* prettylights-syntax-markup-heading */
+    color: #005cc5;
+    font-weight: bold;
+  }
+
+  .light #contents .hljs-bullet {
+    /* prettylights-syntax-markup-list */
+    color: #735c0f;
+  }
+
+  .light #contents .hljs-emphasis {
+    /* prettylights-syntax-markup-italic */
+    color: #24292e;
+    font-style: italic;
+  }
+
+  .light #contents .hljs-strong {
+    /* prettylights-syntax-markup-bold */
+    color: #24292e;
+    font-weight: bold;
+  }
+
+  .light #contents .hljs-addition {
+    /* prettylights-syntax-markup-inserted */
+    color: #22863a;
+    background-color: #f0fff4;
+  }
+
+  .light #contents .hljs-deletion {
+    /* prettylights-syntax-markup-deleted */
+    color: #b31d28;
+    background-color: #ffeef0;
+  }
+
+  .light #contents .hljs-char.escape_,
+  .light #contents .hljs-link,
+  .light #contents .hljs-params,
+  .light #contents .hljs-property,
+  .light #contents .hljs-punctuation,
+  .light #contents .hljs-tag {
     /* purposely ignored */
-    }
+  }
 
-    .dark #contents .hljs {
-        color: #c9d1d9;
-        /* background: #0d1117; */
-    }
-    
-    .dark #contents .hljs-doctag,
-    .dark #contents .hljs-keyword,
-    .dark #contents .hljs-meta .hljs-keyword,
-    .dark #contents .hljs-template-tag,
-    .dark #contents .hljs-template-variable,
-    .dark #contents .hljs-type,
-    .dark #contents .hljs-variable.language_ {
-        /* prettylights-syntax-keyword */
-        color: #ff7b72;
-    }
-    
-    .dark #contents .hljs-title,
-    .dark #contents .hljs-title.class_,
-    .dark #contents .hljs-title.class_.inherited__,
-    .dark #contents .hljs-title.function_ {
-        /* prettylights-syntax-entity */
-        color: #d2a8ff;
-    }
-    
-    .dark #contents .hljs-attr,
-    .dark #contents .hljs-attribute,
-    .dark #contents .hljs-literal,
-    .dark #contents .hljs-meta,
-    .dark #contents .hljs-number,
-    .dark #contents .hljs-operator,
-    .dark #contents .hljs-variable,
-    .dark #contents .hljs-selector-attr,
-    .dark #contents .hljs-selector-class,
-    .dark #contents .hljs-selector-id {
-        /* prettylights-syntax-constant */
-        color: #79c0ff;
-    }
-    
-    .dark #contents .hljs-regexp,
-    .dark #contents .hljs-string,
-    .dark #contents .hljs-meta .hljs-string {
-        /* prettylights-syntax-string */
-        color: #a5d6ff;
-    }
-    
-    .dark #contents .hljs-built_in,
-    .dark #contents .hljs-symbol {
-        /* prettylights-syntax-variable */
-        color: #ffa657;
-    }
-    
-    .dark #contents .hljs-comment,
-    .dark #contents .hljs-code,
-    .dark #contents .hljs-formula {
-        /* prettylights-syntax-comment */
-        color: #8b949e;
-    }
-    
-    .dark #contents .hljs-name,
-    .dark #contents .hljs-quote,
-    .dark #contents .hljs-selector-tag,
-    .dark #contents .hljs-selector-pseudo {
-        /* prettylights-syntax-entity-tag */
-        color: #7ee787;
-    }
-    
-    .dark #contents .hljs-subst {
-        /* prettylights-syntax-storage-modifier-import */
-        color: #c9d1d9;
-    }
-    
-    .dark #contents .hljs-section {
-        /* prettylights-syntax-markup-heading */
-        color: #1f6feb;
-        font-weight: bold;
-    }
-    
-    .dark #contents .hljs-bullet {
-        /* prettylights-syntax-markup-list */
-        color: #f2cc60;
-    }
-    
-    .dark #contents .hljs-emphasis {
-        /* prettylights-syntax-markup-italic */
-        color: #c9d1d9;
-        font-style: italic;
-    }
-    
-    .dark #contents .hljs-strong {
-        /* prettylights-syntax-markup-bold */
-        color: #c9d1d9;
-        font-weight: bold;
-    }
-    
-    .dark #contents .hljs-addition {
-        /* prettylights-syntax-markup-inserted */
-        color: #aff5b4;
-        background-color: #033a16;
-    }
-    
-    .dark #contents .hljs-deletion {
-        /* prettylights-syntax-markup-deleted */
-        color: #ffdcd7;
-        background-color: #67060c;
-    }
-    
-    .dark #contents .hljs-char.escape_,
-    .dark #contents .hljs-link,
-    .dark #contents .hljs-params,
-    .dark #contents .hljs-property,
-    .dark #contents .hljs-punctuation,
-    .dark #contents .hljs-tag {
-        /* purposely ignored */
-    }
+  .dark #contents .hljs {
+    color: #c9d1d9;
+    /* background: #0d1117; */
+  }
 
-    #about ul > li {
-        @apply text-sm;
-        @apply mb-1;
-    }
+  .dark #contents .hljs-doctag,
+  .dark #contents .hljs-keyword,
+  .dark #contents .hljs-meta .hljs-keyword,
+  .dark #contents .hljs-template-tag,
+  .dark #contents .hljs-template-variable,
+  .dark #contents .hljs-type,
+  .dark #contents .hljs-variable.language_ {
+    /* prettylights-syntax-keyword */
+    color: #ff7b72;
+  }
 
-    #about a {
-        @apply text-sm;
-        @apply text-ellipsis; 
-        @apply overflow-hidden;
-        @apply text-sky-600;
-    }
+  .dark #contents .hljs-title,
+  .dark #contents .hljs-title.class_,
+  .dark #contents .hljs-title.class_.inherited__,
+  .dark #contents .hljs-title.function_ {
+    /* prettylights-syntax-entity */
+    color: #d2a8ff;
+  }
 
-    #about a::after {
-        content: " ↗";
-    }
+  .dark #contents .hljs-attr,
+  .dark #contents .hljs-attribute,
+  .dark #contents .hljs-literal,
+  .dark #contents .hljs-meta,
+  .dark #contents .hljs-number,
+  .dark #contents .hljs-operator,
+  .dark #contents .hljs-variable,
+  .dark #contents .hljs-selector-attr,
+  .dark #contents .hljs-selector-class,
+  .dark #contents .hljs-selector-id {
+    /* prettylights-syntax-constant */
+    color: #79c0ff;
+  }
 
-    #about a:hover {
-        @apply text-sky-200;
-    }
+  .dark #contents .hljs-regexp,
+  .dark #contents .hljs-string,
+  .dark #contents .hljs-meta .hljs-string {
+    /* prettylights-syntax-string */
+    color: #a5d6ff;
+  }
+
+  .dark #contents .hljs-built_in,
+  .dark #contents .hljs-symbol {
+    /* prettylights-syntax-variable */
+    color: #ffa657;
+  }
+
+  .dark #contents .hljs-comment,
+  .dark #contents .hljs-code,
+  .dark #contents .hljs-formula {
+    /* prettylights-syntax-comment */
+    color: #8b949e;
+  }
+
+  .dark #contents .hljs-name,
+  .dark #contents .hljs-quote,
+  .dark #contents .hljs-selector-tag,
+  .dark #contents .hljs-selector-pseudo {
+    /* prettylights-syntax-entity-tag */
+    color: #7ee787;
+  }
+
+  .dark #contents .hljs-subst {
+    /* prettylights-syntax-storage-modifier-import */
+    color: #c9d1d9;
+  }
+
+  .dark #contents .hljs-section {
+    /* prettylights-syntax-markup-heading */
+    color: #1f6feb;
+    font-weight: bold;
+  }
+
+  .dark #contents .hljs-bullet {
+    /* prettylights-syntax-markup-list */
+    color: #f2cc60;
+  }
+
+  .dark #contents .hljs-emphasis {
+    /* prettylights-syntax-markup-italic */
+    color: #c9d1d9;
+    font-style: italic;
+  }
+
+  .dark #contents .hljs-strong {
+    /* prettylights-syntax-markup-bold */
+    color: #c9d1d9;
+    font-weight: bold;
+  }
+
+  .dark #contents .hljs-addition {
+    /* prettylights-syntax-markup-inserted */
+    color: #aff5b4;
+    background-color: #033a16;
+  }
+
+  .dark #contents .hljs-deletion {
+    /* prettylights-syntax-markup-deleted */
+    color: #ffdcd7;
+    background-color: #67060c;
+  }
+
+  .dark #contents .hljs-char.escape_,
+  .dark #contents .hljs-link,
+  .dark #contents .hljs-params,
+  .dark #contents .hljs-property,
+  .dark #contents .hljs-punctuation,
+  .dark #contents .hljs-tag {
+    /* purposely ignored */
+  }
+
+  /* Mermaid SVG Container */
+  #contents div.mermaid svg {
+    margin: 0 auto;
+    @apply mt-8;
+    @apply mb-8;
+  }
+
+  /* Mermaid Header Text */
+  .dark #contents div.mermaid svg text.statediagramTitleText {
+    fill: #ccc !important;
+  }
+
+  .light #contents div.mermaid svg text.statediagramTitleText {
+    fill: #000 !important;
+  }
+
+  /* SVG Text Label */
+  #contents div.mermaid svg .nodeLabel p {
+    text-indent: unset;
+    padding: 0;
+  }
+
+  #about ul > li {
+    @apply text-sm;
+    @apply mb-1;
+  }
+
+  #about a {
+    @apply text-sm;
+    @apply text-ellipsis;
+    @apply overflow-hidden;
+    @apply text-sky-600;
+  }
+
+  #about a::after {
+    content: ' ↗';
+  }
+
+  #about a:hover {
+    @apply text-sky-200;
+  }
+
+  /* Footnote */
+  #contents .footnotes p {
+    @apply mt-0;
+    @apply p-0;
+  }
 }
 
 /* 인라인 코드 부분, 22  */
 @media screen(md) {
-    #contents p {
-        @apply indent-4;
-    }
+  #contents p {
+    @apply indent-4;
+  }
 
-    #contents p code {
-        word-break: break-word;
-    }
+  #contents p code {
+    word-break: break-word;
+  }
 }
