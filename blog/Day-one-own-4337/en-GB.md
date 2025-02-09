@@ -10,6 +10,7 @@ tags:
   - Solidity
   - Ethereum
 revision: 1
+publish: 0
 ---
 
 Ethereum has two types of accounts. There are contract accounts that we will implement, and accounts based on public-private key pairs. Public-private key accounts can trigger transactions and directly pay network fees.

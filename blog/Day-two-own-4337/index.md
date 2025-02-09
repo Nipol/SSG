@@ -9,6 +9,7 @@ tags:
   - Solidity
   - Ethereum
 revision: 1
+publish: 0
 ---
 
 앞서, [이전 글](../Day-one-own-4337/)에 이은 두 번째 기록입니다. 전날 느꼈던 점이라면 명세만으로는 구현할 수 있는 것이 제한적이며 명확하지 않은 부분들이 존재했습니다.

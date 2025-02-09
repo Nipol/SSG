@@ -9,6 +9,7 @@ tags:
   - Smart Contract
   - Ethereum
 revision: 1
+publish: 1
 ---
 
 ## 목차
