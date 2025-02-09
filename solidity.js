@@ -15,7 +15,7 @@ function isNegativeLookbehindAvailable() {
   }
 }
 
-const byteSizes = Array.from({length: 32}, (_, i) => i + 1);
+const byteSizes = Array.from({ length: 32 }, (_, i) => i + 1);
 
 const bytesTypes = byteSizes.map(function (bytes) {
   return 'bytes' + bytes;
@@ -132,8 +132,8 @@ export default function (hljs) {
 
   const SOL_OPERATORS = {
     className: 'operator',
-    begin: /[+\-!~*\/%<>&^|=]/ //excluding ?: because having : as operator causes problems
-};
+    begin: /[+\-!~*\/%<>&^|=]/, //excluding ?: because having : as operator causes problems
+  };
 
   const SOL_KEYWORDS = {
     type: TYPES,
@@ -226,57 +226,62 @@ export default function (hljs) {
 
   const SOL_STRUCT = {
     $pattern: /[A-Za-z_$][A-Za-z_$0-9]*/,
-    beginKeywords: 'struct enum', end: '{', excludeEnd: true,
+    beginKeywords: 'struct enum',
+    end: '{',
+    excludeEnd: true,
     illegal: /[:"\[\]]/,
     contains: [
-        SOL_TITLE_MODE,
-        hljs.C_LINE_COMMENT_MODE,
-        hljs.C_BLOCK_COMMENT_MODE
-    ]
+      SOL_TITLE_MODE,
+      hljs.C_LINE_COMMENT_MODE,
+      hljs.C_BLOCK_COMMENT_MODE,
+    ],
   };
 
   const SOL_IMPORT = { // imports
-    beginKeywords: 'import', end: ';',
+    beginKeywords: 'import',
+    end: ';',
     $pattern: /[A-Za-z_$][A-Za-z_$0-9]*/,
     keywords: 'import from as',
     contains: [
-        SOL_TITLE_MODE,
-        solAposStringMode(hljs),
-        solQuoteStringMode(hljs),
-        HEX_APOS_STRING_MODE,
-        HEX_QUOTE_STRING_MODE,
-        hljs.C_LINE_COMMENT_MODE,
-        hljs.C_BLOCK_COMMENT_MODE,
-        SOL_OPERATORS
-    ]
+      SOL_TITLE_MODE,
+      solAposStringMode(hljs),
+      solQuoteStringMode(hljs),
+      HEX_APOS_STRING_MODE,
+      HEX_QUOTE_STRING_MODE,
+      hljs.C_LINE_COMMENT_MODE,
+      hljs.C_BLOCK_COMMENT_MODE,
+      SOL_OPERATORS,
+    ],
   };
 
   const SOL_USING = { // using
-    beginKeywords: 'using', end: ';',
+    beginKeywords: 'using',
+    end: ';',
     $pattern: /[A-Za-z_$][A-Za-z_$0-9]*/,
     keywords: 'using for global',
     contains: [
-        SOL_TITLE_MODE,
-        hljs.C_LINE_COMMENT_MODE,
-        hljs.C_BLOCK_COMMENT_MODE,
-        SOL_OPERATORS
-    ]
+      SOL_TITLE_MODE,
+      hljs.C_LINE_COMMENT_MODE,
+      hljs.C_BLOCK_COMMENT_MODE,
+      SOL_OPERATORS,
+    ],
   };
 
   const SOL_PRAGMA = { // pragmas
     className: 'meta',
-    beginKeywords: 'pragma', end: ';',
+    beginKeywords: 'pragma',
+    end: ';',
     $pattern: /[A-Za-z_$][A-Za-z_$0-9]*/,
     keywords: {
-        keyword: 'pragma solidity experimental abicoder',
-        built_in: 'ABIEncoderV2 SMTChecker v1 v2'
+      keyword: 'pragma solidity experimental abicoder',
+      built_in: 'ABIEncoderV2 SMTChecker v1 v2',
     },
     contains: [
-        hljs.C_LINE_COMMENT_MODE,
-        hljs.C_BLOCK_COMMENT_MODE,
-        hljs.inherit(solAposStringMode(hljs), { className: 'meta-string' }),
-        hljs.inherit(solQuoteStringMode(hljs), { className: 'meta-string' })
-    ]
+      hljs.C_LINE_COMMENT_MODE,
+      hljs.C_BLOCK_COMMENT_MODE,
+      hljs.inherit(solAposStringMode(hljs), { className: 'meta-string' }),
+      hljs.inherit(solQuoteStringMode(hljs), { className: 'meta-string' }),
+    ],
   };
 
   const DOC_COMMENT = hljs.COMMENT(
@@ -291,7 +296,7 @@ export default function (hljs) {
           contains: [
             {
               className: 'doctag',
-              begin: '@[A-Za-z]+'
+              begin: '@[A-Za-z]+',
             },
             {
               className: 'type',
@@ -299,33 +304,33 @@ export default function (hljs) {
               end: '\\}',
               excludeEnd: true,
               excludeBegin: true,
-              relevance: 0
+              relevance: 0,
             },
             {
               className: 'variable',
               begin: '[A-Za-z$_][0-9A-Za-z$_]*' + '(?=\\s*(-)|$)',
               endsParent: true,
-              relevance: 0
+              relevance: 0,
             },
             // eat spaces (not newlines) so we can find
             // types or variables
             {
               begin: /(?=[^\n])\s/,
-              relevance: 0
-            }
-          ]
-        }
-      ]
-    }
+              relevance: 0,
+            },
+          ],
+        },
+      ],
+    },
   );
 
   const SOL_COMMENT = {
-    className: "comment",
+    className: 'comment',
     variants: [
       DOC_COMMENT,
       hljs.C_BLOCK_COMMENT_MODE,
-      hljs.C_LINE_COMMENT_MODE
-    ]
+      hljs.C_LINE_COMMENT_MODE,
+    ],
   };
 
   // const SOL_ASSEMBLY = { //assembly section
@@ -403,6 +408,6 @@ export default function (hljs) {
       SOL_USING,
       SOL_PRAGMA,
     ],
-    illegal: /#/
+    illegal: /#/,
   };
 }

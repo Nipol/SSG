@@ -2,8 +2,8 @@
   "tasks": {
     "build": "deno run --allow-read --allow-write --allow-run --allow-env index.ts",
     "start": "export DEV='true' && deno run --allow-read --allow-write --allow-run --allow-env --watch=blog/,template/ index.ts",
-    "tailwind": "tailwind -i main.css -o dist/build.css -w",
-    "tailwind:build": "tailwind -i main.css -o dist/build.css -m",
+    "tailwind": "tailwindcss -i main.css -o dist/build.css -w",
+    "tailwind:build": "tailwindcss -i main.css -o dist/build.css -m",
     "server": "http-server -p 80 ./dist"
   },
   "fmt": {
@@ -13,5 +13,6 @@
     "semiColons": true,
     "singleQuote": true,
     "exclude": ["blog/**/*.md"]
-  }
+  },
+  "nodeModulesDir": "auto"
 }

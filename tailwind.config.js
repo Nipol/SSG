@@ -10,6 +10,7 @@ module.exports = {
     'mx-auto',
     'text-slate-300',
     'text-slate-800',
+    'text-gray-950',
     'dark:bg-coralpink',
     'bg-coralpink/30',
     'dark:bg-amber-700',
@@ -25,7 +26,7 @@ module.exports = {
     'dark:bg-pink-950',
     'bg-pink-950/30',
     'dark:bg-teal-950',
-    'bg-teal-950/30'
+    'bg-teal-950/30',
   ],
   theme: {
     extend: {

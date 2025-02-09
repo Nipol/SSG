@@ -9,6 +9,7 @@ tags:
   - Automata
   - Artificial Intelligent
 revision: 2
+publish: 1
 ---
 
 ## 목차
