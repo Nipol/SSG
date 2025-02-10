@@ -477,9 +477,20 @@
   }
 
   /* Footnote */
+  #contents .footnotes {
+    @apply mb-8;
+  }
+
   #contents .footnotes p {
+    @apply indent-0;
     @apply mt-0;
     @apply p-0;
+    word-wrap: break-word;
+    word-break: keep-all;
+  }
+
+  #contents a.data-footnote-backref:after {
+    content: '';
   }
 }
 
