@@ -1,5 +1,5 @@
 #!/bin/sh
-npm install tailwindcss @tailwindcss/cli playwright \
+npm install --unsafe-perm tailwindcss @tailwindcss/cli playwright \
 && npx playwright install --with-deps chromium
 curl -fsSL https://deno.land/x/install/install.sh | DENO_INSTALL=./deno sh -s v2.1.9
 
