@@ -6,7 +6,7 @@ import remarkParse from 'https://esm.sh/remark-parse@11';
 import remarkGfm from 'https://esm.sh/remark-gfm@4';
 import remarkRehype from 'https://esm.sh/remark-rehype@11';
 import remarkMath from 'https://esm.sh/remark-math@6';
-import remarkMermaid from "https://esm.sh/remark-mermaid";
+import remarkMermaid from "npm:remark-mermaidjs";
 import rehypeRaw from 'https://esm.sh/rehype-raw@7';
 import rehypeKatex from 'https://esm.sh/rehype-katex@7';
 import rehypeSlug from 'https://esm.sh/rehype-slug@6';
@@ -60,7 +60,9 @@ async function readArticle(articlename: string): Promise<Blog[]> {
       const metadata = extract(markdownContent);
       const body = await unified()
         .use(remarkParse)
-        .use(remarkMermaid, { simple: true })
+        .use(remarkMermaid, {
+          mermaidConfig: { theme: 'dark' }
+        })
         .use(remarkGfm)
         .use(remarkMath)
         .use(remarkToc, { heading: '목차|Contents?|indice' })
