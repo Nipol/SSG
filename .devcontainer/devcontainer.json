@@ -13,7 +13,7 @@
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers-contrib/features/http-server:1": {}
   },
-  "postCreateCommand": "npm install -g tailwindcss @tailwindcss/cli"
+  "postCreateCommand": "npm install -g tailwindcss @tailwindcss/cli playwright"
   // Use 'mounts' to make the cargo cache persistent in a Docker Volume.
   // "mounts": [
   // 	{

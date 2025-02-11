@@ -435,25 +435,25 @@
   }
 
   /* Mermaid SVG Container */
-  #contents div.mermaid svg {
+  #contents [id^="mermaid-"] {
     margin: 0 auto;
     @apply mt-8;
     @apply mb-8;
   }
 
+  /* Mermaid Text Label */
+  #contents svg .nodeLabel p {
+    text-indent: initial;
+    padding: 0;
+  }
+
   /* Mermaid Header Text */
-  .dark #contents div.mermaid svg text.statediagramTitleText {
+  .dark #contents [id^="mermaid-"] text.statediagramTitleText {
     fill: #ccc !important;
   }
 
-  .light #contents div.mermaid svg text.statediagramTitleText {
+  .light #contents [id^="mermaid-"] text.statediagramTitleText {
     fill: #000 !important;
-  }
-
-  /* SVG Text Label */
-  #contents div.mermaid svg .nodeLabel p {
-    text-indent: unset;
-    padding: 0;
   }
 
   #about ul > li {
