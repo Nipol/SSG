@@ -30,6 +30,9 @@ jobs:
       - name: Install Node dependencies
         run: npm install tailwindcss @tailwindcss/cli playwright
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
       - name: Build CSS
         run: npx @tailwindcss/cli -i main.css -o dist/build.css -m
 
