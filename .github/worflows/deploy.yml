@@ -36,17 +36,27 @@ jobs:
       - name: Build SSG
         run: deno task build
 
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Pages Production
+        id: deploy-id
         if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          environment: production
+          command: pages deploy ./dist --project-name=${{ secrets.CF_PROJECT_NAME }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to Cloudflare Pages Preview
+        id: deploy-id
+        if: github.event_name == 'pull_request'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ./dist --project-name=${{ secrets.CF_PROJECT_NAME }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: print deployment-url
         env:
-          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          DEPLOYMENT_URL: ${{ steps.deploy-id.outputs.deployment-url }}
         run: echo $DEPLOYMENT_URL
