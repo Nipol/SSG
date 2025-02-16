@@ -37,7 +37,6 @@ jobs:
         run: deno task build
 
       - name: Deploy to Cloudflare Pages Production
-        id: deploy-id
         if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
@@ -47,7 +46,7 @@ jobs:
           gitHubToken: ${{ secrets.GITTOKEN }}
 
       - name: Deploy to Cloudflare Pages Preview
-        id: deploy-id
+        id: deploy-preview
         if: github.event_name == 'pull_request'
         uses: cloudflare/wrangler-action@v3
         with:
@@ -56,7 +55,8 @@ jobs:
           command: pages deploy ./dist --project-name=${{ secrets.CF_PROJECT_NAME }}
           gitHubToken: ${{ secrets.GITTOKEN }}
 
-      - name: print deployment-url
+      - name: Print Deployment URL
+        if: github.event_name == 'pull_request'
         env:
-          DEPLOYMENT_URL: ${{ steps.deploy-id.outputs.deployment-url }}
+          DEPLOYMENT_URL: ${{ steps.deploy-preview.outputs.deployment-url }}
         run: echo $DEPLOYMENT_URL
