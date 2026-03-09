@@ -31,3 +31,15 @@
 
 `index.md`는 블로그 사용자가 가장 편한 언어로 작성된 글이며, 해당 글의 번역은 `ISO 639-1` 명세에 따른 코드로 제공되어야
 하며, 해당 언어가 Blog에 표시되기 위해서는 `flags.json` 파일에 추가되어야 합니다.
+
+## 개발 실행 (DevContainer)
+
+개발 중에는 `start`, `tailwind`, `server`를 함께 띄워야 하므로 아래 두 방법 중 하나를 사용하면 됩니다.
+
+1. 단일 터미널 실행 (prefix 로그)
+   - `deno task dev`
+   - `[start]`, `[tailwind]`, `[server]` prefix로 로그를 구분해 출력합니다.
+
+2. VSCode 분할 로그 실행
+   - `Tasks: Run Task`에서 `SSG: dev (split logs)` 실행
+   - 세 프로세스가 분할 터미널로 병렬 실행되어 각 로그를 독립적으로 확인할 수 있습니다.

@@ -6,7 +6,7 @@ import remarkParse from 'https://esm.sh/remark-parse@11';
 import remarkGfm from 'https://esm.sh/remark-gfm@4';
 import remarkRehype from 'https://esm.sh/remark-rehype@11';
 import remarkMath from 'https://esm.sh/remark-math@6';
-import remarkMermaid from "npm:remark-mermaidjs";
+import remarkMermaid from 'npm:remark-mermaidjs';
 import rehypeRaw from 'https://esm.sh/rehype-raw@7';
 import rehypeKatex from 'https://esm.sh/rehype-katex@7';
 import rehypeSlug from 'https://esm.sh/rehype-slug@6';
@@ -23,6 +23,9 @@ import remarkToc from './remarkToc.ts';
 import solidity from './solidity.js';
 
 const { PREFERRED_LANGUAGE, DATE_LOCALE } = config();
+const preferredLanguage = PREFERRED_LANGUAGE ?? 'ko-KR';
+const dateLocale = DATE_LOCALE ?? preferredLanguage;
+const isDevMode = Deno.env.get('DEV') === 'true';
 
 /**
  * @notice Article metadata extracted from blog post
@@ -61,12 +64,12 @@ async function readArticle(articlename: string): Promise<Blog[]> {
       const body = await unified()
         .use(remarkParse)
         .use(remarkMermaid, {
-          mermaidConfig: { theme: 'dark' }
+          mermaidConfig: { theme: 'dark' },
         })
         .use(remarkGfm)
         .use(remarkMath)
         .use(remarkToc, { heading: '목차|Contents?|indice' })
-        .use(remarkRehype, { allowDangerousHtml: true, footnoteLabelProperties: {className: ''} })
+        .use(remarkRehype, { allowDangerousHtml: true, footnoteLabelProperties: { className: '' } })
         .use(rehypeRaw)
         .use(rehypeKatex, { output: 'mathml' })
         .use(rehypeSlug)
@@ -86,6 +89,20 @@ async function readArticle(articlename: string): Promise<Blog[]> {
   return blogPosts;
 }
 
+function getOutputLanguageFileName(languageCode: string): string {
+  return preferredLanguage === languageCode ? 'index' : languageCode;
+}
+
+function getPreferredTranslation(posts: Blog[]): Blog | null {
+  if (posts.length === 0) return null;
+  return posts.find((blog) => blog.language === preferredLanguage) ?? posts[0];
+}
+
+function isPublishedArticle(posts: Blog[]): boolean {
+  if (posts.length === 0) return false;
+  return posts[0].publish === 1;
+}
+
 /**
  * Injects translation links into the provided template.
  * @param template The template to inject translation links into.
@@ -96,8 +113,8 @@ function injectTranslates(template: string, languageCode: string[]): string {
   if (languageCode.length == 1) return '';
 
   const transform = (template: string, languageCode: string): string => {
-    if (languageCode === PREFERRED_LANGUAGE) return template.replace(/<!-- LINK -->/g, '.');
-    if (Deno.env.get('DEV') === 'true') return template.replace(/<!-- LINK -->/g, `./${languageCode}.html`);
+    if (languageCode === preferredLanguage) return template.replace(/<!-- LINK -->/g, '.');
+    if (isDevMode) return template.replace(/<!-- LINK -->/g, `./${languageCode}.html`);
     return template.replace(/<!-- LINK -->/g, `./${languageCode}`);
   };
 
@@ -152,19 +169,20 @@ function injectContents(
  * @returns The template with article information injected.
  */
 async function injectArticle(template: string, { link, title, date, desc, tags, img }: Blog): Promise<string> {
-  const tagsTemplate = `<li><!-- LABEL --></li>`
+  const tagsTemplate = `<li><!-- LABEL --></li>`;
 
   const taglist = tags.map((v) => {
     return tagsTemplate.replace(/<!-- LABEL -->/g, v).replace(/<!-- COLOR -->/g, TAGS[v]);
   });
 
-  const imgTemplate = `<img class="h-48 w-full object-cover md:h-full md:w-48" src="/<!-- LINK -->/<!-- IMAGE -->" alt="" />`
+  const imgTemplate =
+    `<img class="h-48 w-full object-cover md:h-full md:w-48" src="/<!-- LINK -->/<!-- IMAGE -->" alt="" />`;
   const image = img ? imgTemplate.replace(/<!-- LINK -->/g, `${link}`).replace(/<!-- IMAGE -->/g, img) : '';
 
   return template
     .replace(/<!-- LINK -->/g, `${link}`)
     .replace(/<!-- TITLE -->/g, title)
-    .replace(/<!-- DATE -->/g, new Intl.DateTimeFormat(DATE_LOCALE).format(date))
+    .replace(/<!-- DATE -->/g, new Intl.DateTimeFormat(dateLocale).format(date))
     .replace(/<!-- DESC -->/g, desc)
     .replace(/<!-- TAGS -->/g, taglist.join(''))
     .replace(/<!-- IMAGE -->/g, image);
@@ -202,7 +220,7 @@ async function resourceMove(articlename: string) {
   for await (const file of Deno.readDir(`blog/${articlename}`)) {
     if (file.name.includes('.md')) continue;
     filePromises.push(
-      Deno.copyFile(`blog/${articlename}/${file.name}`, `dist/${articlename}/${file.name}`)
+      Deno.copyFile(`blog/${articlename}/${file.name}`, `dist/${articlename}/${file.name}`),
     );
   }
   await Promise.all(filePromises);
@@ -224,9 +242,13 @@ async function readBlog(): Promise<{ articleInfos: Blog[][] }> {
   }
 
   // 정렬
+  const validArticleInfos = articleInfosArray.filter((infos) => infos.length > 0);
   return {
-    articleInfos: articleInfosArray.sort((a, b) => {
-      return b[0].date.getTime() - a[0].date.getTime();
+    articleInfos: validArticleInfos.sort((a, b) => {
+      const articleA = getPreferredTranslation(a);
+      const articleB = getPreferredTranslation(b);
+      if (!articleA || !articleB) return 0;
+      return articleB.date.getTime() - articleA.date.getTime();
     }),
   };
 }
@@ -236,13 +258,14 @@ async function readBlog(): Promise<{ articleInfos: Blog[][] }> {
  */
 async function updateManifestAndServiceWorker() {
   const hash = await getCommitHash();
-  const files = [];
+  const files: string[] = [];
   for await (const entry of walk('dist')) {
     if (!entry.isDirectory) {
       if (entry.path.includes('service-worker.js')) continue;
       files.push(`/${entry.path.replace('dist/', '')}`);
     }
   }
+  files.sort();
 
   // Update manifest.json
   const manifest = JSON.parse(await Deno.readTextFile('manifest.json'));
@@ -286,13 +309,16 @@ async function createRSSFeed(articles: Blog[][]) {
     generateXML('description', '');
 
   for (const article of articles) {
+    const firstPost = article[0];
+    if (!firstPost) continue;
+
     xmlContent += generateXML(
       'item',
-      generateXML('title', article[0].title) +
-        generateXML('description', article[0].desc) +
-        generateXML('link', `https://ysnim.ink/${article[0].link}`) +
-        generateXML('guid', article[0].link, 'isPermaLink', 'false') +
-        generateXML('pubDate', article[0].date.toUTCString()),
+      generateXML('title', firstPost.title) +
+        generateXML('description', firstPost.desc) +
+        generateXML('link', `https://ysnim.ink/${firstPost.link}`) +
+        generateXML('guid', firstPost.link, 'isPermaLink', 'false') +
+        generateXML('pubDate', firstPost.date.toUTCString()),
     );
   }
 
@@ -300,62 +326,65 @@ async function createRSSFeed(articles: Blog[][]) {
   await Deno.writeTextFile('dist/feed.xml', xmlContent);
 }
 
+type Templates = {
+  aboutTemplate: string;
+  articleTemplate: string;
+  blogTemplate: string;
+  indexTemplate: string;
+  translateTemplate: string;
+};
+
+async function loadTemplates(): Promise<Templates> {
+  const navTemplate = await Deno.readTextFile('template/nav.html');
+  const titleNavTemplate = navTemplate.replace('<!-- TITLE -->', 'yoonsung.eth');
+  const backNavTemplate = navTemplate.replace('<!-- TITLE -->', '목록으로');
+
+  return {
+    aboutTemplate: (await Deno.readTextFile('template/about.html')).replace('<!-- NavBar -->', titleNavTemplate),
+    articleTemplate: await Deno.readTextFile('template/article.html'),
+    blogTemplate: (await Deno.readTextFile('template/blog.html')).replace('<!-- NavBar -->', backNavTemplate),
+    indexTemplate: (await Deno.readTextFile('template/blogs.html')).replace('<!-- NavBar -->', titleNavTemplate),
+    translateTemplate: await Deno.readTextFile('template/translate.html'),
+  };
+}
+
+async function saveTranslatedArticleFiles(
+  articleInfosForArticle: Blog[],
+  blogTemplate: string,
+  translateTemplate: string,
+) {
+  const languages: string[] = articleInfosForArticle.map((v) => v.language);
+  const translateAnchor = injectTranslates(translateTemplate, languages);
+
+  const articlePromises = articleInfosForArticle.map((articleInfo) =>
+    saveArticleFile(
+      articleInfo.link,
+      getOutputLanguageFileName(articleInfo.language),
+      injectContents(blogTemplate, articleInfo, translateAnchor),
+    )
+  );
+
+  await Promise.all(articlePromises);
+}
+
 /**
  * Generates HTML for each article in the provided articles array and saves them in the 'dist' directory.
  * @param articleInfos An array of arrays of Blog objects containing metadata and content for each article.
  */
 async function generateHTML({ articleInfos }: { articleInfos: Blog[][] }) {
-  const navTemplate = await Deno.readTextFile(`template/nav.html`);
-  const titleNavTemplate = navTemplate.replace('<!-- TITLE -->', 'yoonsung.eth');
-  const backNavTemplate = navTemplate.replace('<!-- TITLE -->', '목록으로');
-  const aboutTemplate = (await Deno.readTextFile(`template/about.html`)).replace('<!-- NavBar -->', titleNavTemplate);
-  const blogTemplate = (await Deno.readTextFile(`template/blog.html`)).replace('<!-- NavBar -->', backNavTemplate);
-  const translateTemplate = await Deno.readTextFile(`template/translate.html`);
-  const articleTemplate = await Deno.readTextFile(`template/article.html`);
-  const indexTemplate = (await Deno.readTextFile(`template/blogs.html`)).replace('<!-- NavBar -->', titleNavTemplate);
+  const { aboutTemplate, articleTemplate, blogTemplate, indexTemplate, translateTemplate } = await loadTemplates();
   const articleHTMLList: string[] = new Array<string>();
 
-  for (let i = 0; i < articleInfos.length; i++) {
-    const articleInfosForArticle = articleInfos[i];
+  for (const articleInfosForArticle of articleInfos) {
+    if (!isPublishedArticle(articleInfosForArticle)) continue;
 
-    // 퍼블리시 상태가 아니라면 글 내보내지 말 것
-    const isPublish = articleInfosForArticle.map((v) => {
-      return v.publish;
-    });
-    if (isPublish[0] == 0) continue;
-
-    // 언어 코드 추출
-    const languages: string[] = articleInfosForArticle.map((v) => {
-      return v.language;
-    });
-
-    // 추출된 번역 코드에 따라, 번역 링크 생성
-    const translateAnchor = injectTranslates(translateTemplate, languages);
-
-    // 블로그 언어에 따라 글을 생성하여 저장
-    for (const articleInfo of articleInfosForArticle) {
-      await saveArticleFile(
-        articleInfo.link,
-        (PREFERRED_LANGUAGE === articleInfo.language) ? 'index' : articleInfo.language,
-        injectContents(blogTemplate, articleInfo, translateAnchor),
-      );
-    }
-
-    // 블로그 언어에 따라 글을 생성하여 저장
-    const articlePromises = articleInfosForArticle.map(articleInfo => 
-      saveArticleFile(
-        articleInfo.link,
-        (PREFERRED_LANGUAGE === articleInfo.language) ? 'index' : articleInfo.language,
-        injectContents(blogTemplate, articleInfo, translateAnchor)
-      )
-    );
-
-    await Promise.all(articlePromises);
+    await saveTranslatedArticleFiles(articleInfosForArticle, blogTemplate, translateTemplate);
 
     // article 정보에 따라서, 리소스 이동
     await resourceMove(articleInfosForArticle[0].link);
 
-    const preferredLang = articleInfosForArticle.find((blog) => blog.language == PREFERRED_LANGUAGE) as Blog;
+    const preferredLang = getPreferredTranslation(articleInfosForArticle);
+    if (!preferredLang) continue;
 
     // HTML 아티클 목록 생성
     articleHTMLList.push(await injectArticle(articleTemplate, preferredLang));
@@ -371,7 +400,7 @@ async function generateHTML({ articleInfos }: { articleInfos: Blog[][] }) {
   }
 
   // 생성된 HTML 아티클 목록 주입
-  saveArticleList(indexTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
+  await saveArticleList(indexTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
 }
 
 async function getCommitHash(): Promise<string> {
@@ -388,24 +417,7 @@ async function getCommitHash(): Promise<string> {
   const process = (await command.spawn().output()).stdout;
   const out = td.decode(process).trim();
 
-  return out + "1";
-}
-
-async function getPrevCommitHash(): Promise<string> {
-  const td = new TextDecoder();
-  const command = new Deno.Command('git', {
-    args: [
-      'rev-parse',
-      'HEAD~1',
-    ],
-    stdin: 'piped',
-    stdout: 'piped',
-  });
-
-  const process = (await command.spawn().output()).stdout;
-  const out = td.decode(process).trim();
-
-  return out;
+  return out + '1';
 }
 
 (async () => {

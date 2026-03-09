@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SSG: start",
+      "type": "shell",
+      "command": "deno task start",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "ssg-dev",
+        "clear": false
+      }
+    },
+    {
+      "label": "SSG: tailwind",
+      "type": "shell",
+      "command": "deno task tailwind",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "ssg-dev",
+        "clear": false
+      }
+    },
+    {
+      "label": "SSG: server",
+      "type": "shell",
+      "command": "deno task server",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "ssg-dev",
+        "clear": false
+      }
+    },
+    {
+      "label": "SSG: dev (split logs)",
+      "dependsOn": [
+        "SSG: start",
+        "SSG: tailwind",
+        "SSG: server"
+      ],
+      "dependsOrder": "parallel"
+    }
+  ]
+}

@@ -4,7 +4,8 @@
     "start": "export DEV='true' && deno run --allow-read --allow-write --allow-run --allow-env --allow-sys --watch=blog/,template/ index.ts",
     "tailwind": "tailwindcss -i main.css -o dist/build.css -w",
     "tailwind:build": "tailwindcss -i main.css -o dist/build.css -m",
-    "server": "http-server -p 80 ./dist"
+    "server": "http-server -p 80 ./dist",
+    "dev": "deno run --allow-run --allow-env --allow-sys ./scripts/dev.ts"
   },
   "fmt": {
     "useTabs": false,

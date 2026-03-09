@@ -13,7 +13,13 @@
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers-contrib/features/http-server:1": {}
   },
-  "postCreateCommand": "npm install -g tailwindcss @tailwindcss/cli playwright"
+  "forwardPorts": [80],
+  "portsAttributes": {
+    "80": {
+      "label": "SSG Preview",
+      "onAutoForward": "openPreview"
+    }
+  }
   // Use 'mounts' to make the cargo cache persistent in a Docker Volume.
   // "mounts": [
   // 	{
