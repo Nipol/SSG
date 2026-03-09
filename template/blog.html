@@ -11,17 +11,22 @@
     <link rel="manifest" href="/manifest.json">
     <title><!-- TITLE --></title>
     <script>
-      if (
-        localStorage.getItem('color-theme') === 'dark' ||
-        (!('color-theme' in localStorage) &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches)
-      ) {
-        document.documentElement.classList.remove('light');
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-      }
+      (() => {
+        const storageKey = 'theme-preference';
+        const storedPreference = localStorage.getItem(storageKey);
+        const preference = storedPreference === 'dark' || storedPreference === 'system'
+          ? storedPreference
+          : 'light';
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const resolvedTheme = preference === 'dark' || (preference === 'system' && prefersDark) ? 'dark' : 'light';
+        const root = document.documentElement;
+
+        root.dataset.themePreference = preference;
+        root.dataset.themeResolved = resolvedTheme;
+        root.classList.toggle('dark', resolvedTheme === 'dark');
+        root.classList.toggle('light', resolvedTheme === 'light');
+        root.style.colorScheme = resolvedTheme;
+      })();
     </script>
     <link rel="stylesheet" href="/build.css">
   </head>
@@ -40,51 +45,67 @@
     </div>
 
     <script>
-      const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-      const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+      (() => {
+        const storageKey = 'theme-preference';
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const buttons = Array.from(document.querySelectorAll('[data-theme-value]'));
 
-      // Change the icons inside the button based on previous settings
-      if (
-        localStorage.getItem('color-theme') === 'dark' ||
-        (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-      ) {
-        themeToggleLightIcon.classList.remove('hidden');
-      } else {
-        themeToggleDarkIcon.classList.remove('hidden');
-      }
+        const isValidPreference = (value) => value === 'light' || value === 'dark' || value === 'system';
 
-      const themeToggleBtn = document.getElementById('theme-toggle');
+        const readPreference = () => {
+          const fromDom = document.documentElement.dataset.themePreference;
+          if (isValidPreference(fromDom)) return fromDom;
+          const fromStorage = localStorage.getItem(storageKey);
+          return isValidPreference(fromStorage) ? fromStorage : 'light';
+        };
 
-      themeToggleBtn.addEventListener('click', function () {
-        // toggle icons inside button
-        themeToggleDarkIcon.classList.toggle('hidden');
-        themeToggleLightIcon.classList.toggle('hidden');
+        const resolveTheme = (preference) => {
+          if (preference === 'dark') return 'dark';
+          if (preference === 'system') return media.matches ? 'dark' : 'light';
+          return 'light';
+        };
 
-        // if set via local storage previously
-        if (localStorage.getItem('color-theme')) {
-          if (localStorage.getItem('color-theme') === 'light') {
-            document.documentElement.classList.remove('light');
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('color-theme', 'dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-            localStorage.setItem('color-theme', 'light');
+        const applyPreference = (preference, shouldPersist) => {
+          const resolvedTheme = resolveTheme(preference);
+          const root = document.documentElement;
+
+          root.dataset.themePreference = preference;
+          root.dataset.themeResolved = resolvedTheme;
+          root.classList.toggle('dark', resolvedTheme === 'dark');
+          root.classList.toggle('light', resolvedTheme === 'light');
+          root.style.colorScheme = resolvedTheme;
+
+          buttons.forEach((button) => {
+            const active = button.dataset.themeValue === preference;
+            button.setAttribute('aria-pressed', String(active));
+            button.classList.toggle('is-active', active);
+          });
+
+          if (shouldPersist) {
+            localStorage.setItem(storageKey, preference);
           }
+        };
 
-          // if NOT set via local storage previously
+        buttons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const nextPreference = button.dataset.themeValue;
+            if (!isValidPreference(nextPreference)) return;
+            applyPreference(nextPreference, true);
+          });
+        });
+
+        const handleSystemThemeChange = () => {
+          if (readPreference() === 'system') applyPreference('system', false);
+        };
+
+        if (typeof media.addEventListener === 'function') {
+          media.addEventListener('change', handleSystemThemeChange);
         } else {
-          if (document.documentElement.classList.contains('dark')) {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-            localStorage.setItem('color-theme', 'light');
-          } else {
-            document.documentElement.classList.remove('light');
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('color-theme', 'dark');
-          }
+          media.addListener(handleSystemThemeChange);
         }
-      });
+
+        applyPreference(readPreference(), false);
+      })();
 
       // Register the service worker
       if ('serviceWorker' in navigator) {

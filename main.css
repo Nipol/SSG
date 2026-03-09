@@ -40,6 +40,32 @@
     @apply py-2;
   }
 
+  .theme-option {
+    @apply px-2;
+    @apply py-2;
+    @apply text-gray-500;
+    @apply dark:text-gray-400;
+    @apply hover:bg-gray-100;
+    @apply dark:hover:bg-gray-700;
+    @apply focus:outline-none;
+    @apply focus:ring-2;
+    @apply focus:ring-gray-200;
+    @apply dark:focus:ring-gray-700;
+  }
+
+  .theme-option + .theme-option {
+    @apply border-l;
+    @apply border-gray-200;
+    @apply dark:border-gray-700;
+  }
+
+  .theme-option.is-active {
+    @apply bg-gray-200;
+    @apply text-gray-950;
+    @apply dark:bg-gray-700;
+    @apply dark:text-white;
+  }
+
   /* 목차 */
   #contents h2:nth-of-type(1) {
     @apply text-2xl;

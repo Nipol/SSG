@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo</title>
     <script>
-      // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
-      if (
-        localStorage.getItem('color-theme') === 'dark' ||
-        (!('color-theme' in localStorage) &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches)
-      ) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      (() => {
+        const storageKey = 'theme-preference';
+        const storedPreference = localStorage.getItem(storageKey);
+        const preference = storedPreference === 'dark' || storedPreference === 'system'
+          ? storedPreference
+          : 'light';
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const resolvedTheme = preference === 'dark' || (preference === 'system' && prefersDark) ? 'dark' : 'light';
+        const root = document.documentElement;
+
+        root.dataset.themePreference = preference;
+        root.dataset.themeResolved = resolvedTheme;
+        root.classList.toggle('dark', resolvedTheme === 'dark');
+        root.classList.toggle('light', resolvedTheme === 'light');
+        root.style.colorScheme = resolvedTheme;
+      })();
     </script>
     <link rel="stylesheet" href="/build.css">
   </head>
