@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "article": "Can-Second-Brain-Secure-Data",
+    "source_language": "ko-KR",
+    "target_language": "en-GB",
+    "description": "Term mapping for consistent translation reuse by context.",
+    "updated_at": "2026-03-11"
+  },
+  "contexts": {
+    "general_pkm": {
+      "세컨드 브레인": "Second Brain",
+      "디지털 가든": "Digital Garden",
+      "개인 지식 관리": "Personal Knowledge Management (PKM)",
+      "시스템": "system",
+      "방법론": "methodology",
+      "메모": "note",
+      "기록": "record",
+      "재평가": "re-evaluate",
+      "연결성": "connectivity",
+      "색인": "index"
+    },
+    "zettelkasten": {
+      "제텔카스텐": "Zettelkasten",
+      "니클라스 루만": "Niklas Luhmann",
+      "상자": "box",
+      "참조 메모": "reference note",
+      "관련 메모": "related notes",
+      "관련 키워드": "related keywords",
+      "노트 카탈로그": "note catalogue"
+    },
+    "para": {
+      "프로젝트": "Projects",
+      "영역": "Areas",
+      "자료": "Resources",
+      "보관소": "Archives",
+      "인박스": "Inbox",
+      "폴더": "folder",
+      "정제": "refine"
+    },
+    "ontology": {
+      "온톨로지": "Ontology",
+      "데이터 온톨로지": "Data Ontology",
+      "의미론적 계층": "rich semantic layer",
+      "시맨틱 웹": "Semantic Web",
+      "유로피아나": "Europeana",
+      "유럽 연합 전자 도서관 프로젝트": "European Union's digital library project",
+      "유산": "heritage",
+      "연결성": "connectivity"
+    },
+    "tools_and_implementation": {
+      "옵시디언": "Obsidian",
+      "노션": "Notion",
+      "프론트매터": "Frontmatter",
+      "내부 링크": "Internal Link",
+      "메타데이터": "metadata",
+      "자동화": "automation",
+      "동기화": "synchronise"
+    }
+  }
+}

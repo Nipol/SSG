@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "article": "Resin-point-system",
+    "source_language": "ko-KR",
+    "target_language": "en-GB",
+    "description": "Context-aware term mapping for tone-consistent translation reuse.",
+    "updated_at": "2026-03-11"
+  },
+  "contexts": {
+    "core_system_design": {
+      "레진": "Resin",
+      "포인트 시스템": "point system",
+      "피로도 시스템": "fatigue system",
+      "행동을 이끌어내다": "drive behaviour",
+      "소비 속도": "consumption speed",
+      "재화": "resources",
+      "허들": "barrier",
+      "회복": "recover",
+      "소진": "consume",
+      "예비 포인트": "reserve points"
+    },
+    "smart_contract_logic": {
+      "스마트 컨트랙트": "smart contract",
+      "블록체인": "blockchain",
+      "무결성": "integrity",
+      "소각": "burn",
+      "양도": "transfer",
+      "접근 시간": "access timestamp",
+      "외부 호출": "external call",
+      "업데이트 비용": "update cost",
+      "선형적으로 증가": "scale linearly",
+      "경과 시간": "elapsed time"
+    },
+    "account_abstraction": {
+      "계정 추상화": "Account Abstraction",
+      "가스비": "gas fee",
+      "수수료": "fee",
+      "페이마스터": "Paymaster",
+      "롤업": "rollup",
+      "기여도": "contribution score",
+      "테스트 네트워크": "testnet"
+    },
+    "delegation_and_signatures": {
+      "위임": "delegation",
+      "서명": "signature",
+      "서명 데이터": "signature data",
+      "유효기간": "deadline",
+      "서명 카운트": "signature counter",
+      "공개키 복원": "recover public key",
+      "허용": "permit",
+      "도용": "misuse"
+    },
+    "collective_nft": {
+      "단체": "collective",
+      "소속감": "sense of belonging",
+      "주조": "mint",
+      "호스트": "host",
+      "세션": "session",
+      "지갑 주소": "wallet address",
+      "백엔드": "backend",
+      "검증 로직": "verification logic"
+    },
+    "meeting_governance": {
+      "회의 소집": "meeting scheduling",
+      "참여": "participation",
+      "인센티브": "incentive",
+      "거버넌스": "governance",
+      "과다 참여": "over-participation",
+      "공개적인 회의": "open meeting"
+    },
+    "tone_preservation": {
+      "설명형 문체": "explanatory tone",
+      "경험담": "first-hand narrative",
+      "실용적 강조": "pragmatic emphasis",
+      "부담을 줄이다": "reduce stress",
+      "바로 적용 가능한": "practically applicable"
+    }
+  }
+}
