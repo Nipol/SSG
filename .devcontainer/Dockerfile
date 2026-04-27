@@ -1,4 +1,4 @@
-FROM denoland/deno:bin-2.7.4 AS deno
+FROM denoland/deno:bin-2.7.13 AS deno
 FROM mcr.microsoft.com/devcontainers/rust:1-1-bullseye
 COPY --from=deno /deno /usr/local/bin/deno
 
