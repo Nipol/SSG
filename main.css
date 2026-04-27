@@ -115,6 +115,10 @@
     color: oklch(91% 0.012 255);
   }
 
+  html:lang(en) .article-title {
+    font-family: var(--font-english-technical);
+  }
+
   .article-meta {
     @apply pt-5;
     @apply text-sm;
