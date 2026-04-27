@@ -11,23 +11,32 @@ const FONT_STYLESHEET_ORIGIN = 'https://fonts.googleapis.com';
 const FONT_FILE_ORIGIN = 'https://fonts.gstatic.com';
 
 const canCache = (response) => response && (response.ok || response.type === 'opaque');
+const isNavigationRequest = (request) =>
+  request.mode === 'navigate' ||
+  request.destination === 'document' ||
+  (request.headers.get('accept') || '').includes('text/html');
 
-async function networkFirst(request) {
-  const cache = await caches.open(FONT_CACHE);
+async function networkFirst(request, cacheName, options = {}) {
+  const cache = await caches.open(cacheName);
+  const networkRequest = options.reload ? new Request(request, { cache: 'reload' }) : request;
 
   try {
-    const response = await fetch(request);
+    const response = await fetch(networkRequest);
     if (canCache(response)) await cache.put(request, response.clone());
     return response;
   } catch (error) {
     const cached = await cache.match(request);
     if (cached) return cached;
+    if (isNavigationRequest(request)) {
+      const fallback = await cache.match('/');
+      if (fallback) return fallback;
+    }
     throw error;
   }
 }
 
-async function cacheFirst(request) {
-  const cache = await caches.open(FONT_CACHE);
+async function cacheFirst(request, cacheName) {
+  const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
   if (cached) return cached;
 
@@ -58,18 +67,29 @@ self.addEventListener('install', (event) => {
   })());
 });
 
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   const requestUrl = new URL(event.request.url);
 
   if (requestUrl.origin === FONT_STYLESHEET_ORIGIN) {
-    event.respondWith(networkFirst(event.request));
+    event.respondWith(networkFirst(event.request, FONT_CACHE));
     return;
   }
 
   if (event.request.destination === 'font' || requestUrl.origin === FONT_FILE_ORIGIN) {
-    event.respondWith(cacheFirst(event.request));
+    event.respondWith(cacheFirst(event.request, FONT_CACHE));
+    return;
+  }
+
+  if (isNavigationRequest(event.request)) {
+    event.respondWith(networkFirst(event.request, OFFLINE_CACHE, { reload: true }));
     return;
   }
 

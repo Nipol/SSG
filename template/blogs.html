@@ -17,14 +17,11 @@
       (() => {
         const storageKey = 'theme-preference';
         const storedPreference = localStorage.getItem(storageKey);
-        const preference =
-          storedPreference === 'light' || storedPreference === 'dark' || storedPreference === 'system'
-            ? storedPreference
-            : 'system';
+        const preference = storedPreference === 'light' || storedPreference === 'dark' || storedPreference === 'system'
+          ? storedPreference
+          : 'system';
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const resolvedTheme = preference === 'dark' || (preference === 'system' && prefersDark)
-          ? 'dark'
-          : 'light';
+        const resolvedTheme = preference === 'dark' || (preference === 'system' && prefersDark) ? 'dark' : 'light';
         const root = document.documentElement;
 
         root.dataset.themePreference = preference;
@@ -147,12 +144,44 @@
 
       // Register the service worker
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function () {
-          navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          }, function (err) {
-            console.log('ServiceWorker registration failed: ', err);
+        let refreshing = false;
+        const hadController = Boolean(navigator.serviceWorker.controller);
+        const requestActivationAfterCache = function (worker) {
+          if (!hadController || !worker) return;
+          if (worker.state === 'installed') {
+            worker.postMessage({ type: 'SKIP_WAITING' });
+            return;
+          }
+
+          worker.addEventListener('statechange', function () {
+            if (worker.state === 'installed') {
+              worker.postMessage({ type: 'SKIP_WAITING' });
+            }
           });
+        };
+
+        navigator.serviceWorker.addEventListener('controllerchange', function () {
+          if (!hadController || refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
+
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' }).then(
+            function (registration) {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+              requestActivationAfterCache(registration.waiting);
+              registration.addEventListener('updatefound', function () {
+                requestActivationAfterCache(registration.installing);
+              });
+              registration.update().catch(function (err) {
+                console.log('ServiceWorker update check failed: ', err);
+              });
+            },
+            function (err) {
+              console.log('ServiceWorker registration failed: ', err);
+            },
+          );
         });
       }
     </script>
