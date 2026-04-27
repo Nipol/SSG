@@ -19,7 +19,7 @@
       "label": "SSG Preview",
       "onAutoForward": "openPreview"
     }
-  }
+  },
   // Use 'mounts' to make the cargo cache persistent in a Docker Volume.
   // "mounts": [
   // 	{
@@ -36,7 +36,7 @@
   // "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": "rustc --version",
+  "postCreateCommand": "npx playwright install chromium"
 
   // Configure tool-specific properties.
   // "customizations": {},

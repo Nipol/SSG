@@ -1,19 +1,19 @@
 import { config } from 'https://deno.land/x/dotenv/mod.ts';
 import { walk } from 'https://deno.land/std/fs/mod.ts';
 import { extract } from 'https://deno.land/std@0.196.0/front_matter/any.ts';
-import { unified } from 'https://esm.sh/unified@11';
-import remarkParse from 'https://esm.sh/remark-parse@11';
-import remarkGfm from 'https://esm.sh/remark-gfm@4';
-import remarkRehype from 'https://esm.sh/remark-rehype@11';
-import remarkMath from 'https://esm.sh/remark-math@6';
+import { unified } from 'npm:unified@11';
+import remarkParse from 'npm:remark-parse@11';
+import remarkGfm from 'npm:remark-gfm@4';
+import remarkRehype from 'npm:remark-rehype@11';
+import remarkMath from 'npm:remark-math@6';
 import remarkMermaid from 'npm:remark-mermaidjs';
-import rehypeRaw from 'https://esm.sh/rehype-raw@7';
-import rehypeKatex from 'https://esm.sh/rehype-katex@7';
-import rehypeSlug from 'https://esm.sh/rehype-slug@6';
-import rehypeAutolinkHeadings from 'https://esm.sh/rehype-autolink-headings@7';
-import rehypeHighlight from 'https://esm.sh/rehype-highlight@7';
-import rehypeExternalLinks from 'https://esm.sh/rehype-external-links@3';
-import rehypeStringify from 'https://esm.sh/rehype-stringify@10';
+import rehypeRaw from 'npm:rehype-raw@7';
+import rehypeKatex from 'npm:rehype-katex@7';
+import rehypeSlug from 'npm:rehype-slug@6';
+import rehypeAutolinkHeadings from 'npm:rehype-autolink-headings@7';
+import rehypeHighlight from 'npm:rehype-highlight@7';
+import rehypeExternalLinks from 'npm:rehype-external-links@3';
+import rehypeStringify from 'npm:rehype-stringify@10';
 
 // @deno-types="./data.d.ts"
 import TAGS from './tags.json' with { type: 'json' };
@@ -82,7 +82,7 @@ async function readArticle(articlename: string): Promise<Blog[]> {
       blogPosts.push({ ...metadata.attrs, link: articlename, filename: file.name, body: body } as Blog);
     } catch (error) {
       console.error(`Failed to read article file: ${file.name}`, error);
-      continue;
+      throw new Error(`Failed to read article file: ${articlename}/${file.name}`, { cause: error });
     }
   }
 
@@ -176,7 +176,7 @@ async function injectArticle(template: string, { link, title, date, desc, tags, 
   });
 
   const imgTemplate =
-    `<img class="h-48 w-full object-cover md:h-full md:w-48" src="/<!-- LINK -->/<!-- IMAGE -->" alt="" />`;
+    `<img class="post-image" src="/<!-- LINK -->/<!-- IMAGE -->" alt="" loading="lazy" decoding="async" />`;
   const image = img ? imgTemplate.replace(/<!-- LINK -->/g, `${link}`).replace(/<!-- IMAGE -->/g, img) : '';
 
   return template
@@ -257,7 +257,6 @@ async function readBlog(): Promise<{ articleInfos: Blog[][] }> {
  * Updates the manifest.json and service-worker.js files in the 'dist' directory based on the current state of the 'dist' directory.
  */
 async function updateManifestAndServiceWorker() {
-  const hash = await getCommitHash();
   const files: string[] = [];
   for await (const entry of walk('dist')) {
     if (!entry.isDirectory) {
@@ -271,6 +270,7 @@ async function updateManifestAndServiceWorker() {
   const manifest = JSON.parse(await Deno.readTextFile('manifest.json'));
   // manifest.start_url = "/"; // Assuming the first file is the start_url
   await Deno.writeTextFile('./dist/manifest.json', JSON.stringify(manifest, null, 2));
+  const hash = await getCacheVersion(files);
 
   // Update service-worker.js
   const serviceWorker = await Deno.readTextFile('service-worker.js');
@@ -282,6 +282,24 @@ async function updateManifestAndServiceWorker() {
   if (Deno.env.get('DEV') !== 'true') {
     await Deno.writeTextFile('./dist/service-worker.js', updatedServiceWorker);
   }
+}
+
+function toHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function getCacheVersion(files: string[]): Promise<string> {
+  const encoder = new TextEncoder();
+  const fileDigests: string[] = [];
+
+  for (const file of files) {
+    const bytes = await Deno.readFile(`dist${file}`);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    fileDigests.push(`${file}:${toHex(digest)}`);
+  }
+
+  const digest = await crypto.subtle.digest('SHA-256', encoder.encode(fileDigests.join('\n')));
+  return toHex(digest);
 }
 
 /**
@@ -401,23 +419,6 @@ async function generateHTML({ articleInfos }: { articleInfos: Blog[][] }) {
 
   // 생성된 HTML 아티클 목록 주입
   await saveArticleList(indexTemplate.replace(/<!-- ARTICLES -->/g, articleHTMLList.join('\n')));
-}
-
-async function getCommitHash(): Promise<string> {
-  const td = new TextDecoder();
-  const command = new Deno.Command('git', {
-    args: [
-      'rev-parse',
-      'HEAD',
-    ],
-    stdin: 'piped',
-    stdout: 'piped',
-  });
-
-  const process = (await command.spawn().output()).stdout;
-  const out = td.decode(process).trim();
-
-  return out + '1';
 }
 
 (async () => {

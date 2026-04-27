@@ -3,8 +3,15 @@ dist
 deno.lock
 .DS_Store
 venv
-.aider*
 .obsidian
+.agents
+docs
+tests
 node_modules
 package.json
 package-lock.json
+AGENTS.md
+DESIGN.md
+DESIGN.json
+PRODUCT.md
+skills-lock.json

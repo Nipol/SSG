@@ -1,19 +1,17 @@
-<li>
-  <a href="./<!-- LINK -->">
-    <div class="my-4 overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-md">
-      <div class="md:flex">
-        <div class="md:shrink-0">
-          <!-- IMAGE -->
-        </div>
-        <div class="p-8">
-          <p class="block text-2xl leading-tight font-medium text-black dark:text-white hover:underline"><!-- TITLE --></p>
-          <p class="mt-2 text-gray-500"><!-- DESC --></p>
-          <ul class="flex mt-2 *:rounded-full *:border *:border-sky-100 *:bg-sky-50 *:px-2 *:py-0.7 *:mr-1.5 dark:text-sky-300 dark:*:border-sky-500/15 dark:*:bg-sky-500/10 ...">
-            <!-- TAGS -->
-          </ul>
-          <p class="mt-2 text-sky-800 dark:text-white"><!-- DATE --></p>
-        </div>
+<li class="post-list-item">
+  <a class="post-link" href="./<!-- LINK -->">
+    <article class="post-entry">
+      <div class="post-copy">
+        <p class="post-date"><!-- DATE --></p>
+        <h2 class="post-title"><!-- TITLE --></h2>
+        <p class="post-description"><!-- DESC --></p>
+        <ul class="post-tags" aria-label="Tags">
+          <!-- TAGS -->
+        </ul>
       </div>
-    </div>
+      <div class="post-media">
+        <!-- IMAGE -->
+      </div>
+    </article>
   </a>
 </li>

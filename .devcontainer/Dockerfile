@@ -16,6 +16,7 @@ RUN apt-get update \
   && apt-get update \
   && apt-get install -y --no-install-recommends nodejs \
   && npm install -g tailwindcss @tailwindcss/cli playwright \
+  && npx playwright install-deps \
   && mkdir -p "${PLAYWRIGHT_BROWSERS_PATH}" \
   && playwright install --with-deps chromium \
   && chown -R vscode:vscode "${PLAYWRIGHT_BROWSERS_PATH}" \
