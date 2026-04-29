@@ -17,7 +17,7 @@
     {
       "label": "SSG: tailwind",
       "type": "shell",
-      "command": "deno task tailwind",
+      "command": "npx @tailwindcss/cli -i main.css -o dist/build.css -w",
       "isBackground": true,
       "problemMatcher": [],
       "presentation": {

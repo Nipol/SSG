@@ -6,9 +6,13 @@
   :root {
     --font-korean: 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-english-technical: 'Anonymous Pro', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-korean-weight-regular: 300;
+    --font-korean-weight-strong: 400;
+    --font-korean-weight-emphasis: 500;
     background-color: #fdfdff;
     @apply text-gray-950;
     font-family: var(--font-korean);
+    font-weight: var(--font-korean-weight-regular);
     transition: color 0.4s ease-in-out, background-color 0.4s ease-in-out;
   }
 
@@ -105,6 +109,7 @@
     color: oklch(18% 0.018 255);
     font-family: var(--font-korean);
     font-size: clamp(2.35rem, 8vw, 4.75rem);
+    font-weight: var(--font-korean-weight-strong);
     line-height: 0.98;
     letter-spacing: 0;
     text-align: center;
@@ -117,6 +122,7 @@
 
   html:lang(en) .article-title {
     font-family: var(--font-english-technical);
+    font-weight: 400;
   }
 
   .article-meta {
@@ -124,6 +130,7 @@
     @apply text-sm;
     @apply font-medium;
     color: oklch(57% 0.02 255);
+    font-weight: var(--font-korean-weight-strong);
     text-align: center;
   }
 
@@ -226,6 +233,7 @@
     @apply text-sm;
     @apply font-medium;
     color: var(--post-quiet);
+    font-weight: var(--font-korean-weight-strong);
   }
 
   .post-title {
@@ -235,6 +243,7 @@
     @apply font-medium;
     @apply leading-tight;
     color: var(--post-ink);
+    font-weight: var(--font-korean-weight-strong);
     letter-spacing: 0;
     word-break: keep-all;
   }
@@ -319,6 +328,7 @@
     margin-inline: auto;
     color: oklch(26% 0.018 255);
     font-size: 1.0625rem;
+    font-weight: var(--font-korean-weight-regular);
     line-height: 1.82;
   }
 
@@ -329,6 +339,7 @@
   html:lang(en) #contents.article-contents {
     font-family: var(--font-english-technical);
     font-size: 1rem;
+    font-weight: 400;
     line-height: 1.78;
   }
 
@@ -338,6 +349,7 @@
     @apply text-base;
     @apply font-medium;
     color: oklch(62% 0.018 255);
+    font-weight: var(--font-korean-weight-strong);
   }
 
   #contents.article-contents h2:nth-of-type(1) + :nth-child(1 of ul) {
@@ -373,6 +385,7 @@
     @apply font-medium;
     color: oklch(61% 0.19 24);
     font-size: clamp(1.85rem, 4vw, 2.65rem);
+    font-weight: var(--font-korean-weight-strong);
     line-height: 1.12;
     word-wrap: break-word;
     word-break: keep-all;
@@ -389,6 +402,7 @@
     @apply font-medium;
     color: oklch(66% 0.17 55);
     font-size: clamp(1.35rem, 2.8vw, 1.9rem);
+    font-weight: var(--font-korean-weight-strong);
     line-height: 1.22;
     text-wrap: balance;
   }
@@ -403,6 +417,7 @@
     @apply font-medium;
     color: oklch(58% 0.14 185);
     font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+    font-weight: var(--font-korean-weight-strong);
     line-height: 1.28;
   }
 
@@ -416,6 +431,7 @@
     @apply text-lg;
     @apply font-medium;
     color: oklch(52% 0.15 248);
+    font-weight: var(--font-korean-weight-strong);
   }
 
   .dark #contents.article-contents h5 {
@@ -428,6 +444,7 @@
     @apply text-lg;
     @apply font-medium;
     color: oklch(55% 0.16 302);
+    font-weight: var(--font-korean-weight-strong);
   }
 
   .dark #contents.article-contents h6 {
@@ -445,6 +462,16 @@
 
   html:lang(en) #contents.article-contents p + p {
     margin-top: 0.78rem;
+  }
+
+  #contents.article-contents strong,
+  #contents.article-contents b {
+    font-weight: var(--font-korean-weight-emphasis);
+  }
+
+  html:lang(en) #contents.article-contents strong,
+  html:lang(en) #contents.article-contents b {
+    font-weight: 700;
   }
 
   #contents.article-contents h2 + p,
